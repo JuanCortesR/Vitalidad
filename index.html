@@ -39,34 +39,45 @@ nav button i{font-style:normal;font-size:24px}nav button.on{color:var(--ac)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
 const K='vitalidad_v1';
-let S={doc:'',name:'',age:null,sex:'',ex:{}},V={p:'home',c:'az',f:'',t:''},LOG=[];
-try{const r=localStorage.getItem(K);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
-const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+let DB={cur:'',people:{}},S={doc:'',name:'',age:null,sex:'',ex:{}},V={p:'home',c:'az',f:'',t:''},LOG=[];
+try{const r=JSON.parse(localStorage.getItem(K)||'null');if(r&&r.people)DB=r;else if(r&&(r.doc||r.ex)){const id='p'+Date.now();DB={cur:id,people:{[id]:Object.assign({doc:'',name:'',age:null,sex:'',ex:{}},r)}}}
+if(DB.cur&&DB.people[DB.cur])S=DB.people[DB.cur]}catch(e){}
+const save=()=>{try{if(DB.cur)DB.people[DB.cur]=S;localStorage.setItem(K,JSON.stringify(DB))}catch(e){}};
 if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 const T={
 glic:[/^(?:GLICEMIA(?: BASAL)?|GLUCOSA (?:EN AYUNAS|BASAL|SERICA|EN SUERO))/,'Glicemia basal','mg/dL',70,100,'az'],
 hba:[/^(?:HEMOGLOBINA GLICOSILADA|HEMOGLOBINA GLICADA|HBA1C)/,'Hemoglobina glicosilada (HbA1c)','%',0,5.7,'az'],
 col:[/^COLESTEROL TOTAL/,'Colesterol total','mg/dL',50,200,'li'],
-ldl:[/^COLESTEROL(?: DE BAJA DENSIDAD| LDL)/,'Colesterol LDL (malo)','mg/dL',0,130,'li'],
+ldl:[/^COLESTEROL(?: DE BAJA DENSIDAD| LDL(?: - CALCULADO)?)/,'Colesterol LDL (malo)','mg/dL',0,130,'li'],
 hdl:[/^COLESTEROL(?: DE ALTA DENSIDAD| HDL)/,'Colesterol HDL (bueno)','mg/dL',45,65,'li'],
 tri:[/^TRIGLICERIDOS/,'Triglicéridos','mg/dL',40,200,'li'],
 vldl:[/^COLESTEROL VLDL/,'Colesterol VLDL','mg/dL',6,34,'li'],
 cre:[/^CREATININA(?: SERICA| EN SUERO)?(?!\s*EN ORINA)/,'Creatinina en sangre','mg/dL',0.5,0.9,'ri'],
-alb:[/^ALBUMINURIA EN ORINA PARCIAL/,'Albúmina en orina','mg/dL',0,20,'ri'],
-rac:[/^RELACION ALBUMINA\/CREATININA/,'Relación albúmina/creatinina','mg/g',0,20,'ri'],
-den:[/^Densidad Urinaria/,'Densidad urinaria','',1.005,1.03,'or'],
+uri:[/^ACIDO URICO/,'Ácido úrico','mg/dL',3.4,7,'ri'],
+alb:[/^ALBUMINURIA(?: EN ORINA PARCIAL| OCASIONAL)/,'Albúmina en orina','mg/L',0,20,'ri'],
+rac:[/^RELACION ALBUMIN(?:A\/CREATININA|URIA CREATINURIA)/,'Relación albúmina/creatinina','mg/g',0,20,'ri'],
+den:[/^DENSIDAD(?: URINARIA)?/,'Densidad urinaria','',1.005,1.03,'or'],
 ph:[/^pH/,'pH urinario','',4.5,8,'or'],
-leu:[/^Leucocitos/,'Leucocitos (tira)','/µL',0,25,'or'],
+leu:[/^Leucocitos(?!.*HPF)/,'Leucocitos (tira)','/µL',0,25,'or'],
 gb:[/^Globulos blancos/,'Glóbulos blancos en orina','/µL',0,10,'or'],
 gr:[/^Globulos rojos/,'Glóbulos rojos en orina','/µL',0,5,'or'],
 hb:[/^HEMOGLOBINA(?= \d)/,'Hemoglobina','g/dL',12,18,'sa'],
 hct:[/^HEMATOCRITO/,'Hematocrito','%',36,54,'sa'],
-plq:[/^PLAQUETAS/,'Plaquetas','10³/µL',150,500,'sa'],
-gbl:[/^RECUENTO TOTAL GLOBULOS/,'Glóbulos blancos','10³/µL',4,11.5,'sa'],
-grl:[/^RECUENTO TOTAL DE GLOBULOS/,'Glóbulos rojos','10⁶/µL',3.8,6.5,'sa'],
-tsh:[/^TSH(?: HORMONA ESTIMULANTE DE)?/,'TSH (tiroides)','µUI/mL',0.27,4.2,'ti'],
-vitd:[/^VITAMINA D(?: 25 HIDROXI TOTAL)?/,'Vitamina D','ng/mL',30,100,'ti']};
-const C={az:['🍬','Azúcar','Control de diabetes y prediabetes'],li:['🫀','Colesterol','Grasas y riesgo cardiovascular'],ri:['🫘','Riñón','Filtración y pérdida de proteína'],or:['💧','Orina','Infección y características de la orina'],sa:['🩸','Hemograma','Glóbulos, hemoglobina y plaquetas'],ti:['🦋','Tiroides','TSH y vitamina D']};
+plq:[/^(?:RECUENTO DE )?PLAQUETAS/,'Plaquetas','10³/µL',150,500,'sa'],
+gbl:[/^RECUENTO TOTAL (?:GLOBULOS|DE LEUCOCITOS)/,'Glóbulos blancos','10³/µL',4,11.5,'sa'],
+grl:[/^RECUENTO (?:TOTAL DE GLOBULOS|GLOBULOS ROJOS)/,'Glóbulos rojos','10⁶/µL',3.8,6.5,'sa'],
+tsh:[/^(?:TSH(?: HORMONA ESTIMULANTE DE)?|HORMONA ESTIMULANTE DEL TIROIDES(?: ULTRASENSIBLE)?)/,'TSH (tiroides)','µUI/mL',0.27,4.2,'ti'],
+vitd:[/^VITAMINA D(?:- 25 HIDROXI| 25 HIDROXI TOTAL)?/,'Vitamina D','ng/mL',30,100,'vi'],
+b12:[/^VITAMINA B12/,'Vitamina B12','pg/mL',197,771,'vi'],
+fer:[/^FERRITINA/,'Ferritina','ng/mL',30,400,'vi'],
+alt:[/^ALANINO AMINO TRANSFERASA/,'ALT (TGP)','U/L',5,41,'hi'],
+ast:[/^ASPARTATO AMINO TRANSFERASA/,'AST (TGO)','U/L',0,40,'hi'],
+neu:[/^NEUTROFILOS(?=\s+\*?\s*\d)/,'Neutrófilos','10³/µL',2,7.5,'de'],
+lin:[/^LINFOCITOS(?=\s+\*?\s*\d)/,'Linfocitos','10³/µL',1.5,4.5,'de'],
+mon:[/^MONOCITOS(?=\s+\*?\s*\d)/,'Monocitos','10³/µL',0,1,'de'],
+eos:[/^EOSINOFILOS(?=\s+\*?\s*\d)/,'Eosinófilos','10³/µL',0,0.5,'de'],
+bas:[/^BASOFILOS(?=\s+\*?\s*\d)/,'Basófilos','10³/µL',0,0.2,'de']};
+const C={az:['🍬','Azúcar','Control de diabetes y prediabetes'],li:['🫀','Colesterol','Grasas y riesgo cardiovascular'],ri:['🫘','Riñón','Filtración y pérdida de proteína'],or:['💧','Orina','Infección y características de la orina'],sa:['🩸','Hemograma','Glóbulos, hemoglobina y plaquetas'],ti:['🦋','Tiroides','Hormona estimulante de la tiroides (TSH)'],hi:['🧪','Hígado','Enzimas hepáticas'],vi:['🌞','Vitaminas y hierro','Vitamina D, B12 y ferritina'],de:['🛡️','Defensas','Tipos de glóbulos blancos']};
 const FEM=['BLANCA','LILIA','MARIA','ANA','LUZ','ROSA','MARTHA','GLORIA','CARMEN','SANDRA','NANCY','LUCIA','ELSA','EDITH'];
 const MS=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 const num=s=>parseFloat(String(s).replace(',','.'));
@@ -81,38 +92,44 @@ async function readPdf(file,pw){
  const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer(),password:pw}).promise;const lines=[];
  for(let p=1;p<=pdf.numPages;p++){const tc=await(await pdf.getPage(p)).getTextContent();
   const it=tc.items.filter(i=>i.str.trim()).map(i=>({x:i.transform[4],y:i.transform[5],s:i.str})).sort((a,b)=>b.y-a.y),rows=[];
-  it.forEach(i=>{const r=rows[rows.length-1];if(r&&Math.abs(r.y-i.y)<=4)r.it.push(i);else rows.push({y:i.y,it:[i]})});
+  it.forEach(i=>{const r=rows[rows.length-1];if(r&&Math.abs(r.y-i.y)<=6)r.it.push(i);else rows.push({y:i.y,it:[i]})});
   rows.forEach(r=>lines.push(r.it.sort((a,b)=>a.x-b.x).map(i=>i.s).join(' ').replace(/\s+/g,' ').trim()))}
  return lines}
 const nt=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-const SK=/^(?:[\s:.]|A1C|HDL|LDL|VLDL|TOTAL|SERICA|SERICO|SUERO|EN)*[<>]?(\d+(?:[.,]\d+)?)/i;
-function isoDate(tx){let m=tx.match(/Fecha de ingreso\s*:\s*(\d{4}-\d{2}-\d{2})/)||tx.match(/\b(\d{4}-\d{2}-\d{2})\b/);if(m)return m[1];
+const SK=/^(?:[\s:.*]|\([^)]*\)|A1C|HDL|LDL|VLDL|TOTAL|SERICA|SERICO|SUERO|EN)*[<>]?(\d+(?:[.,]\d+)?)/i;
+function isoDate(tx){const mm=tx.match(/Fecha de ingreso\s*:?\s*(\d{1,2})[-\s]([a-z]{3,4})\.?[-\s](\d{4})/i);if(mm){const i=MS.indexOf(mm[2].toLowerCase().slice(0,3));if(i>=0)return mm[3]+'-'+String(i+1).padStart(2,'0')+'-'+mm[1].padStart(2,'0')}
+ let m=tx.match(/ingreso\s*:?\s*(\d{4}-\d{2}-\d{2})/)||tx.match(/\b(\d{4}-\d{2}-\d{2})\b/);if(m)return m[1];
  m=tx.match(/Fecha[^\n\d]{0,30}(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/)||tx.match(/\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/);return m?m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'):''}
 function parse(lines){
  const tx=lines.join('\n'),g=r=>{const m=tx.match(r);return m?m[1].trim():''};
- const r={date:isoDate(tx),name:g(/Paciente\s*:\s*([A-ZÁÉÍÓÚÑ ]+?)\s+(?:Edad|No\.)/),doc:g(/Documento Id\s*:\s*(?:[A-Z]{1,3}-)?(\d+)/),age:num(g(/Edad\s*:\s*(\d+)/)),vals:{}};
- lines.forEach((l0,i)=>{const l=nt(l0);for(const k in T){if(r.vals[k])continue;const m=l.match(new RegExp(T[k][0].source,'i'));if(!m)continue;
+ const r={date:isoDate(tx),name:g(/Paciente\s*:?\s*([A-ZÁÉÍÓÚÑ ]+?)(?:\s+(?:Edad|No\.|Fecha|Documento|Petici|Historia)|\n)/),doc:g(/(?:Documento Id|Historia)\s*:?\s*(?:[A-Z]{1,3}[- ])?(\d+)/),age:num(g(/Edad\s*:?\s*(\d+)/)),sex:/(?:Sexo|G.nero)\s*:?\s*Femenino/i.test(tx)?'F':/(?:Sexo|G.nero)\s*:?\s*Masculino/i.test(tx)?'M':'',vals:{}};
+ lines.forEach((l0,i)=>{const l=nt(l0).replace(/^[^A-Za-z0-9%]+/,'');for(const k in T){if(r.vals[k])continue;const m=l.match(new RegExp(T[k][0].source,'i'));if(!m)continue;
   let rest=l.slice(m[0].length),v=rest.match(SK);
-  if(!v&&lines[i+1]){const n2=nt(lines[i+1]),v2=n2.match(/^\s*[<>]?(\d+(?:[.,]\d+)?)\s*(?:mg|g\/|%|ng|u|\u00b5|fl|pg|10)/i);if(v2){rest=n2;v=v2}}
+  if(!v&&lines[i+1]){const n2=nt(lines[i+1]).replace(/^Resultado\s*:?\s*/i,''),v2=n2.match(/^\s*[<>]?(\d+(?:[.,]\d+)?)\s*(?:mg|g\/|%|ng|u|\u00b5|fl|pg|10)/i);if(v2){rest=n2;v=v2}}
   if(!v)continue;
-  const rg=rest.match(/(\d+(?:[.,]\d+)?)\s+(?:-|\u2013|a)\s+(\d+(?:[.,]\d+)?)/)||rest.match(/\((\d+(?:[.,]\d+)?)\s*-\s*(\d+(?:[.,]\d+)?)\)/);
+  const rg=rest.match(/(\d+(?:[.,]\d+)?)(?:\s*(?:-|\u2013)\s*|\s+a\s+)(\d+(?:[.,]\d+)?)/)||rest.match(/\((\d+(?:[.,]\d+)?)\s*-\s*(\d+(?:[.,]\d+)?)\)/)||rest.match(/[A-Za-z%\/\u00b5]\s+(\d+(?:[.,]\d+)?)\s+(\d+(?:[.,]\d+)?)\s*$/);
   r.vals[k]={v:num(v[1]),lo:rg?num(rg[1]):null,hi:rg?num(rg[2]):null}}});
  return r}
 async function load(files){
  LOG=[];V.p='cargar';draw();
  for(const f of files){try{
-  let lines;try{lines=await readPdf(f,S.doc.replace(/\D/g,''))}catch(e){if(e.name!=='PasswordException')throw e;const pw=prompt('Este PDF tiene una clave distinta al documento. Escríbela aquí:');if(!pw)throw e;lines=await readPdf(f,pw.trim())}
+  let lines;try{lines=await readAny(f)}catch(e){if(e.name!=='PasswordException')throw e;const pw=prompt('Este PDF tiene una clave distinta al documento. Escríbela aquí:');if(!pw)throw e;lines=await readPdf(f,pw.trim())}
   if(!lines.length)throw new Error('el PDF no tiene texto legible (parece una imagen escaneada)');
   const r=parse(lines);
   if(!r.date||!Object.keys(r.vals).length)throw new Error('abrió, pero no reconocí '+(r.date?'los exámenes':'la fecha')+'. Texto leído: '+lines.slice(0,8).join(' | ').slice(0,300));
+  const hit=r.doc&&Object.keys(DB.people).find(id=>DB.people[id].pid===r.doc||String(DB.people[id].doc).replace(/\D/g,'')===r.doc);
+  if(hit){S=DB.people[hit];DB.cur=hit}
+  else if(r.doc&&(Object.keys(S.ex).length||S.pid)){if(!confirm('Este PDF es de '+title(r.name)+', otra persona. ¿Crear un perfil nuevo?'))throw new Error('omitido: es de otra persona ('+title(r.name)+')');const id='p'+Date.now();S={doc:r.doc,name:'',age:null,sex:'',ex:{}};DB.cur=id;DB.people[id]=S}
   const e=S.ex[r.date]=S.ex[r.date]||{vals:{}};Object.assign(e.vals,r.vals);
-  if(r.name){S.name=r.name;if(!S.sex)S.sex=guessSex(r.name)}
+  if(r.name){S.name=r.name;if(!S.sex)S.sex=guessSex(r.name)}if(r.sex)S.sex=r.sex;if(r.doc)S.pid=r.doc;
   if(r.doc&&!S.doc)S.doc=r.doc;
   if(!S.lastDate||r.date>=S.lastDate){S.lastDate=r.date;if(r.age)S.age=r.age}
-  LOG.push('✅ '+f.name+': '+dl(r.date)+' · '+Object.keys(r.vals).length+' resultados')}
+  LOG.push('✅ '+title(S.name)+' · '+dl(r.date)+' · '+Object.keys(r.vals).length+' resultados')}
   catch(e){LOG.push('⚠️ '+f.name+': '+(e.name==='PasswordException'?'la clave (número de documento) no abrió el archivo':e.message||'no se pudo leer'))}}
  save();draw()}
 
+async function readAny(f){let er;for(const p of new Set([S.doc,...Object.values(DB.people).map(x=>x.doc)].filter(Boolean).map(x=>String(x).replace(/\D/g,'')))){try{return await readPdf(f,p)}catch(e){if(e.name!=='PasswordException')throw e;er=e}}
+ if(!er)return readPdf(f,'');throw er}
 const ds=()=>Object.keys(S.ex).sort();
 const series=(k,f,t)=>ds().filter(d=>S.ex[d].vals[k]&&(!f||d>=f)&&(!t||d<=t)).map(d=>({d,...S.ex[d].vals[k]}));
 function rngs(k,s){const a=s.map(p=>p.lo!=null?[p.lo,p.hi]:null);let c=null;
@@ -145,7 +162,7 @@ function sil(sx){const f=sx==='F';
  :'<path d="M30 40 Q50 33 70 40 L66 98 L34 98 Z" fill="url(#sg)"/><g stroke="url(#sg)" stroke-linecap="round" fill="none"><path d="M30 46 L25 90" stroke-width="8"/><path d="M70 46 L75 90" stroke-width="8"/><path d="M43 98 L42 146" stroke-width="10"/><path d="M57 98 L58 146" stroke-width="10"/></g>';
  return '<div class="av"><svg viewBox="0 0 100 156" width="84">'+g+'<circle cx="50" cy="20" r="12" fill="url(#sg)"/><rect x="46" y="30" width="8" height="9" rx="3" fill="url(#sg)"/>'+body+'</svg></div>'}
 
-function setup(){return '<h1>🌿 Vitalidad</h1><p class="mu">Seguimiento de tus exámenes médicos</p><div class="card"><b class="h">Primer paso: la clave de los PDF</b><p class="mu">Muchos laboratorios envían los resultados protegidos con contraseña. Normalmente la clave es el <b>número de documento</b> del paciente, solo números, sin puntos ni letras (por ejemplo 1234567).</p><ol class="mu"><li>Escribe el documento abajo.</li><li>Carga los PDF de resultados.</li><li>La app los abre, lee fechas y valores y arma las gráficas.</li></ol><input id="doc" type="tel" inputmode="numeric" placeholder="Ej. 1234567"><button class="btn" onclick="const v=document.getElementById(\'doc\').value.replace(/\\D/g,\'\');if(v){S.doc=v;save();draw()}">Continuar</button><p class="mu">🔒 Todo se queda guardado solo en este teléfono. Nada se sube a internet.</p></div>'}
+function setup(){return '<h1>🌿 Vitalidad</h1><p class="mu">Seguimiento de tus exámenes médicos</p><div class="card"><b class="h">Primer paso: la clave de los PDF</b><p class="mu">Muchos laboratorios envían los resultados protegidos con contraseña. Normalmente la clave es el <b>número de documento</b> del paciente, solo números, sin puntos ni letras (por ejemplo 1234567).</p><ol class="mu"><li>Escribe el documento abajo.</li><li>Carga los PDF de resultados.</li><li>La app los abre, lee fechas y valores y arma las gráficas.</li></ol><input id="doc" type="tel" inputmode="numeric" placeholder="Ej. 1234567"><button class="btn" onclick="const v=document.getElementById(\'doc\').value.replace(/\\D/g,\'\');if(v)newP()">Continuar</button>'+(Object.keys(DB.people).length?'<button class="btn g" style="margin-top:10px" onclick="go(\'home\')">Cancelar</button>':'')+'<p class="mu">🔒 Todo se queda guardado solo en este teléfono. Nada se sube a internet.</p></div>'}
 
 function home(){
  const d=ds(),last=d[d.length-1],obs=[],out=[];
@@ -156,7 +173,7 @@ function home(){
  const cats=Object.keys(C).map(c=>{const ks=Object.keys(T).filter(k=>T[k][5]===c&&series(k).length);if(!ks.length)return'';
   const n=ks.filter(lastSt).length;
   return '<button class="cat" onclick="go(\'graf\',\''+c+'\')"><span class="e">'+C[c][0]+'</span><b>'+C[c][1]+'</b><span class="mu">'+(n?n+' fuera de rango':'Todo en rango')+'</span></button>'}).join('');
- return '<h1>Inicio</h1><div class="card"><div class="row">'+sil(S.sex)+'<div><div class="big" style="font-size:22px;line-height:1.2">'+esc(title(S.name||'Paciente'))+'</div><p class="mu">'+(S.age?S.age+' años · ':'')+'Doc. '+esc(S.doc)+'</p>'+
+ return '<h1>Inicio</h1>'+ppl()+'<div class="card"><div class="row">'+sil(S.sex)+'<div><div class="big" style="font-size:22px;line-height:1.2">'+esc(title(S.name||'Paciente'))+'</div><p class="mu">'+(S.age?S.age+' años · ':'')+'Doc. '+esc(S.doc)+'</p>'+
  '<div class="row" style="gap:6px;margin-top:6px"><button class="pill'+(S.sex==='F'?' on':'')+'" style="padding:6px 14px;font-size:14px" onclick="S.sex=\'F\';save();draw()">Mujer</button><button class="pill'+(S.sex==='M'?' on':'')+'" style="padding:6px 14px;font-size:14px" onclick="S.sex=\'M\';save();draw()">Hombre</button></div></div></div>'+
  '<div class="stats"><div class="st"><b>'+d.length+'</b><span>Exámenes</span></div><div class="st"><b>'+(last?ml(last):'–')+'</b><span>Último</span></div><div class="st"><b>'+out.length+'</b><span>Fuera de rango</span></div></div></div>'+
  '<div class="card">'+obs.map(o=>'<p>'+o+'</p>').join('')+'<p class="mu" style="font-size:12px">Información de apoyo, no reemplaza la valoración del médico.</p></div>'+
@@ -171,11 +188,15 @@ function graf(){
  return '<h1>Gráficas</h1><div class="sel"><div><label>Desde</label><select onchange="V.f=this.value;draw()">'+op(f)+'</select></div><div><label>Hasta</label><select onchange="V.t=this.value;draw()">'+op(t)+'</select></div></div><div class="scroll">'+pills+'</div><h2 style="margin-top:4px">'+C[V.c][0]+' '+C[V.c][1]+'</h2><p class="mu" style="margin-top:-6px">'+C[V.c][2]+'</p>'+(cards||'<div class="card"><p class="mu">No hay datos de esta categoría en el período.</p></div>')+'<p class="mu">La banda verde es el rango normal que indicó el laboratorio en cada examen.</p>'}
 
 function cargar(){return '<h1>Cargar</h1><div class="card"><p class="mu">Elige uno o varios PDF de resultados. Si ya cargaste un examen, se actualiza sin duplicarse.</p><label class="btn">📄 Elegir PDF<input type="file" accept="application/pdf" multiple hidden onchange="load([...this.files])"></label></div>'+(LOG.length?'<div id="msg" class="card">'+LOG.map(l=>'<div>'+esc(l)+'</div>').join('')+'<button class="btn g" style="margin-top:10px" onclick="go(\'home\')">Ver resumen</button></div>':'')}
-function cfg(){return '<h1>Ajustes</h1><div class="card"><b class="h">Clave de los PDF</b><input id="doc" type="tel" value="'+esc(S.doc)+'"><button class="btn g" onclick="S.doc=document.getElementById(\'doc\').value.replace(/\\D/g,\'\');save();go(\'home\')">Guardar documento</button></div><div class="card"><b class="h">Borrar datos</b><p class="mu">Elimina del teléfono todos los exámenes cargados.</p><button class="btn" style="background:#d24a3a" onclick="if(confirm(\'¿Borrar todo?\')){S={doc:\'\',name:\'\',age:null,sex:\'\',ex:{}};save();go(\'home\')}">Borrar todo</button></div>'}
+function cfg(){return '<h1>Ajustes</h1><div class="card"><b class="h">Personas</b>'+ppl()+'<button class="btn g" onclick="go(\'nueva\')">＋ Agregar persona</button></div>'+'<div class="card"><b class="h">Clave de los PDF</b><input id="doc" type="tel" value="'+esc(S.doc)+'"><button class="btn g" onclick="S.doc=document.getElementById(\'doc\').value.replace(/\\D/g,\'\');save();go(\'home\')">Guardar documento</button></div><div class="card"><b class="h">Borrar datos</b><p class="mu">Elimina del teléfono a esta persona y todos sus exámenes.</p><button class="btn" style="background:#d24a3a" onclick="if(confirm(\'¿Borrar todo?\')){delP()}">Borrar todo</button></div>'}
 
+const ppl=()=>{const ids=Object.keys(DB.people);return ids.length<2?'':'<div class="scroll">'+ids.map(id=>'<button class="pill'+(id===DB.cur?' on':'')+'" onclick="swP(\''+id+'\')">'+esc(title((DB.people[id].name||'Persona').split(' ').slice(-2).join(' ')))+'</button>').join('')+'</div>'};
+const swP=id=>{S=DB.people[id];DB.cur=id;V={p:V.p==='cfg'?'cfg':'home',c:V.c,f:'',t:''};save();draw()};
+function newP(){const v=document.getElementById('doc').value.replace(/\D/g,'');if(!v)return;const id='p'+Date.now();S={doc:v,name:'',age:null,sex:'',ex:{}};DB.cur=id;DB.people[id]=S;save();go('cargar')}
+function delP(){delete DB.people[DB.cur];DB.cur=Object.keys(DB.people)[0]||'';S=DB.people[DB.cur]||{doc:'',name:'',age:null,sex:'',ex:{}};save();go('home')}
 function draw(){const a=document.getElementById('app'),n=document.getElementById('nav');
- a.innerHTML=!S.doc?setup():({graf,cargar,cfg}[V.p]||home)();
- n.style.display=S.doc?'flex':'none';
+ a.innerHTML=(!S.doc||V.p==='nueva')?setup():({graf,cargar,cfg}[V.p]||home)();
+ n.style.display=(S.doc&&V.p!=='nueva')?'flex':'none';
  n.innerHTML=[['home','🏠','Inicio'],['graf','📈','Gráficas'],['cargar','📄','Cargar'],['cfg','⚙️','Ajustes']].map(t=>'<button class="'+(V.p===t[0]?'on':'')+'" onclick="go(\''+t[0]+'\')"><i>'+t[1]+'</i>'+t[2]+'</button>').join('');
  window.scrollTo(0,0)}
 draw();
