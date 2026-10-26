@@ -15,7 +15,7 @@ h2{font-size:20px;margin:22px 0 10px}p{margin:6px 0}.mu{color:var(--mu);font-siz
 .btn{display:block;width:100%;box-sizing:border-box;background:linear-gradient(135deg,var(--ac),#4a8bf0);color:#fff;border:0;border-radius:99px;padding:16px;font-size:17px;font-weight:700;text-align:center}
 .btn.g{background:var(--ac2);color:var(--ac)}
 .pill{flex:none;border:1px solid var(--bd);background:var(--c2);color:var(--tx);border-radius:99px;padding:12px 20px;font:inherit;font-size:16px}
-.pill.on{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:700}
+.pill.on{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:700;position:sticky;left:0;z-index:2}
 .scroll{display:flex;gap:8px;overflow-x:auto;padding:4px 0 12px;scrollbar-width:none}
 .sel{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:8px 0 14px}.sel label{font-size:14px;color:var(--mu)}
 select{appearance:none;-webkit-appearance:none;width:100%;margin-top:6px;border:1px solid var(--bd);background:var(--c2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='18'%3E%3Cpath d='M2 7l4-4 4 4M2 11l4 4 4-4' fill='none' stroke='%238fa8a0' stroke-width='1.8'/%3E%3C/svg%3E") no-repeat right 16px center;color:var(--tx);border-radius:99px;padding:14px 38px 14px 18px;font:inherit;font-size:17px}
@@ -31,7 +31,7 @@ input[type=tel]{width:100%;box-sizing:border-box;padding:16px 20px;border-radius
 .av{background:var(--ac2);border-radius:28px;padding:8px 10px 4px}
 svg text{font-family:inherit}
 ol{padding-left:20px;margin:8px 0}li{margin:6px 0}
-#msg div{font-size:14px;margin:6px 0}
+#msg div{font-size:14px;margin:6px 0;overflow-wrap:anywhere}
 nav{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-around;background:var(--bar);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--bd);padding:8px 4px calc(8px + env(safe-area-inset-bottom,0px))}
 nav button{background:none;border:0;color:var(--mu);font:inherit;font-size:12px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:2px;flex:1}
 nav button i{font-style:normal;font-size:24px}nav button.on{color:var(--ac)}
@@ -44,14 +44,14 @@ try{const r=localStorage.getItem(K);if(r)S=Object.assign(S,JSON.parse(r))}catch(
 const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
 if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 const T={
-glic:[/^GLICEMIA BASAL/,'Glicemia basal','mg/dL',70,100,'az'],
-hba:[/^HEMOGLOBINA GLICOSILADA A1C/,'Hemoglobina glicosilada (HbA1c)','%',0,5.7,'az'],
+glic:[/^(?:GLICEMIA(?: BASAL)?|GLUCOSA (?:EN AYUNAS|BASAL|SERICA|EN SUERO))/,'Glicemia basal','mg/dL',70,100,'az'],
+hba:[/^(?:HEMOGLOBINA GLICOSILADA|HEMOGLOBINA GLICADA|HBA1C)/,'Hemoglobina glicosilada (HbA1c)','%',0,5.7,'az'],
 col:[/^COLESTEROL TOTAL/,'Colesterol total','mg/dL',50,200,'li'],
-ldl:[/^COLESTEROL DE BAJA DENSIDAD/,'Colesterol LDL (malo)','mg/dL',0,130,'li'],
-hdl:[/^COLESTEROL DE ALTA DENSIDAD/,'Colesterol HDL (bueno)','mg/dL',45,65,'li'],
+ldl:[/^COLESTEROL(?: DE BAJA DENSIDAD| LDL)/,'Colesterol LDL (malo)','mg/dL',0,130,'li'],
+hdl:[/^COLESTEROL(?: DE ALTA DENSIDAD| HDL)/,'Colesterol HDL (bueno)','mg/dL',45,65,'li'],
 tri:[/^TRIGLICERIDOS/,'Triglicéridos','mg/dL',40,200,'li'],
 vldl:[/^COLESTEROL VLDL/,'Colesterol VLDL','mg/dL',6,34,'li'],
-cre:[/^CREATININA SERICA/,'Creatinina en sangre','mg/dL',0.5,0.9,'ri'],
+cre:[/^CREATININA(?: SERICA| EN SUERO)?(?!\s*EN ORINA)/,'Creatinina en sangre','mg/dL',0.5,0.9,'ri'],
 alb:[/^ALBUMINURIA EN ORINA PARCIAL/,'Albúmina en orina','mg/dL',0,20,'ri'],
 rac:[/^RELACION ALBUMINA\/CREATININA/,'Relación albúmina/creatinina','mg/g',0,20,'ri'],
 den:[/^Densidad Urinaria/,'Densidad urinaria','',1.005,1.03,'or'],
@@ -64,8 +64,8 @@ hct:[/^HEMATOCRITO/,'Hematocrito','%',36,54,'sa'],
 plq:[/^PLAQUETAS/,'Plaquetas','10³/µL',150,500,'sa'],
 gbl:[/^RECUENTO TOTAL GLOBULOS/,'Glóbulos blancos','10³/µL',4,11.5,'sa'],
 grl:[/^RECUENTO TOTAL DE GLOBULOS/,'Glóbulos rojos','10⁶/µL',3.8,6.5,'sa'],
-tsh:[/^TSH HORMONA ESTIMULANTE DE/,'TSH (tiroides)','µUI/mL',0.27,4.2,'ti'],
-vitd:[/^VITAMINA D 25 HIDROXI TOTAL/,'Vitamina D','ng/mL',30,100,'ti']};
+tsh:[/^TSH(?: HORMONA ESTIMULANTE DE)?/,'TSH (tiroides)','µUI/mL',0.27,4.2,'ti'],
+vitd:[/^VITAMINA D(?: 25 HIDROXI TOTAL)?/,'Vitamina D','ng/mL',30,100,'ti']};
 const C={az:['🍬','Azúcar','Control de diabetes y prediabetes'],li:['🫀','Colesterol','Grasas y riesgo cardiovascular'],ri:['🫘','Riñón','Filtración y pérdida de proteína'],or:['💧','Orina','Infección y características de la orina'],sa:['🩸','Hemograma','Glóbulos, hemoglobina y plaquetas'],ti:['🦋','Tiroides','TSH y vitamina D']};
 const FEM=['BLANCA','LILIA','MARIA','ANA','LUZ','ROSA','MARTHA','GLORIA','CARMEN','SANDRA','NANCY','LUCIA','ELSA','EDITH'];
 const MS=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
@@ -84,19 +84,27 @@ async function readPdf(file,pw){
   it.forEach(i=>{const r=rows[rows.length-1];if(r&&Math.abs(r.y-i.y)<=4)r.it.push(i);else rows.push({y:i.y,it:[i]})});
   rows.forEach(r=>lines.push(r.it.sort((a,b)=>a.x-b.x).map(i=>i.s).join(' ').replace(/\s+/g,' ').trim()))}
  return lines}
+const nt=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const SK=/^(?:[\s:.]|A1C|HDL|LDL|VLDL|TOTAL|SERICA|SERICO|SUERO|EN)*[<>]?(\d+(?:[.,]\d+)?)/i;
+function isoDate(tx){let m=tx.match(/Fecha de ingreso\s*:\s*(\d{4}-\d{2}-\d{2})/)||tx.match(/\b(\d{4}-\d{2}-\d{2})\b/);if(m)return m[1];
+ m=tx.match(/Fecha[^\n\d]{0,30}(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/)||tx.match(/\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/);return m?m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'):''}
 function parse(lines){
  const tx=lines.join('\n'),g=r=>{const m=tx.match(r);return m?m[1].trim():''};
- const r={date:g(/Fecha de ingreso\s*:\s*(\d{4}-\d{2}-\d{2})/),name:g(/Paciente\s*:\s*([A-ZÁÉÍÓÚÑ ]+?)\s+(?:Edad|No\.)/),doc:g(/Documento Id\s*:\s*(?:[A-Z]{1,3}-)?(\d+)/),age:num(g(/Edad\s*:\s*(\d+)/)),vals:{}};
- for(const l of lines)for(const k in T){if(r.vals[k])continue;const m=l.match(T[k][0]);if(!m)continue;
-  const rest=l.slice(m[0].length),v=rest.match(/^\s*[<>]?(\d+(?:[.,]\d+)?)/);if(!v)continue;
-  const rg=rest.match(/(\d+(?:[.,]\d+)?)\s+-\s+(\d+(?:[.,]\d+)?)/);
-  r.vals[k]={v:num(v[1]),lo:rg?num(rg[1]):null,hi:rg?num(rg[2]):null}}
+ const r={date:isoDate(tx),name:g(/Paciente\s*:\s*([A-ZÁÉÍÓÚÑ ]+?)\s+(?:Edad|No\.)/),doc:g(/Documento Id\s*:\s*(?:[A-Z]{1,3}-)?(\d+)/),age:num(g(/Edad\s*:\s*(\d+)/)),vals:{}};
+ lines.forEach((l0,i)=>{const l=nt(l0);for(const k in T){if(r.vals[k])continue;const m=l.match(new RegExp(T[k][0].source,'i'));if(!m)continue;
+  let rest=l.slice(m[0].length),v=rest.match(SK);
+  if(!v&&lines[i+1]){const n2=nt(lines[i+1]),v2=n2.match(/^\s*[<>]?(\d+(?:[.,]\d+)?)\s*(?:mg|g\/|%|ng|u|\u00b5|fl|pg|10)/i);if(v2){rest=n2;v=v2}}
+  if(!v)continue;
+  const rg=rest.match(/(\d+(?:[.,]\d+)?)\s+(?:-|\u2013|a)\s+(\d+(?:[.,]\d+)?)/)||rest.match(/\((\d+(?:[.,]\d+)?)\s*-\s*(\d+(?:[.,]\d+)?)\)/);
+  r.vals[k]={v:num(v[1]),lo:rg?num(rg[1]):null,hi:rg?num(rg[2]):null}}});
  return r}
 async function load(files){
  LOG=[];V.p='cargar';draw();
  for(const f of files){try{
-  const r=parse(await readPdf(f,S.doc.replace(/\D/g,'')));
-  if(!r.date||!Object.keys(r.vals).length)throw new Error('no encontré fecha o resultados');
+  let lines;try{lines=await readPdf(f,S.doc.replace(/\D/g,''))}catch(e){if(e.name!=='PasswordException')throw e;const pw=prompt('Este PDF tiene una clave distinta al documento. Escríbela aquí:');if(!pw)throw e;lines=await readPdf(f,pw.trim())}
+  if(!lines.length)throw new Error('el PDF no tiene texto legible (parece una imagen escaneada)');
+  const r=parse(lines);
+  if(!r.date||!Object.keys(r.vals).length)throw new Error('abrió, pero no reconocí '+(r.date?'los exámenes':'la fecha')+'. Texto leído: '+lines.slice(0,8).join(' | ').slice(0,300));
   const e=S.ex[r.date]=S.ex[r.date]||{vals:{}};Object.assign(e.vals,r.vals);
   if(r.name){S.name=r.name;if(!S.sex)S.sex=guessSex(r.name)}
   if(r.doc&&!S.doc)S.doc=r.doc;
@@ -157,10 +165,10 @@ function home(){
 function graf(){
  const d=ds();if(!d.length)return '<h1>Gráficas</h1><div class="card"><p class="mu">Aún no hay exámenes cargados.</p><button class="btn" onclick="go(\'cargar\')">Cargar resultados</button></div>';
  const f=V.f||d[0],t=V.t||d[d.length-1],op=sel=>d.map(x=>'<option value="'+x+'"'+(x===sel?' selected':'')+'>'+ml(x)+'</option>').join('');
- const pills=Object.keys(C).map(c=>'<button class="pill'+(V.c===c?' on':'')+'" onclick="go(\'graf\',\''+c+'\')">'+C[c][0]+' '+C[c][1]+'</button>').join('');
+ const pills=Object.keys(C).sort((a,b)=>(b===V.c)-(a===V.c)).map(c=>'<button class="pill'+(V.c===c?' on':'')+'" onclick="go(\'graf\',\''+c+'\')">'+C[c][0]+' '+C[c][1]+'</button>').join('');
  const cards=Object.keys(T).filter(k=>T[k][5]===V.c).map(k=>{const s=series(k,f,t);if(!s.length)return'';const R=rngs(k,s),i=s.length-1,p=s[i],q=s[i-1],df=q?p.v-q.v:null;
   return '<div class="card"><div class="row sp"><b class="h">'+T[k][1]+'</b>'+chipFor(st(p.v,R[i][0],R[i][1]))+'</div><div class="row" style="margin:6px 0 2px;align-items:baseline"><span class="big">'+fmt(p.v)+'</span><span class="mu">'+T[k][2]+'</span></div><p class="mu">Rango de ese examen: '+R[i][0]+' – '+R[i][1]+(df!=null?' · vs. anterior: '+(df>0?'▲ +':df<0?'▼ ':'= ')+fmt(df):'')+'</p>'+chart(k,s)+'</div>'}).join('');
- return '<h1>Gráficas</h1><div class="sel"><div><label>Desde</label><select onchange="V.f=this.value;draw()">'+op(f)+'</select></div><div><label>Hasta</label><select onchange="V.t=this.value;draw()">'+op(t)+'</select></div></div><div class="scroll">'+pills+'</div>'+(cards||'<div class="card"><p class="mu">No hay datos de esta categoría en el período.</p></div>')+'<p class="mu">La banda verde es el rango normal que indicó el laboratorio en cada examen.</p>'}
+ return '<h1>Gráficas</h1><div class="sel"><div><label>Desde</label><select onchange="V.f=this.value;draw()">'+op(f)+'</select></div><div><label>Hasta</label><select onchange="V.t=this.value;draw()">'+op(t)+'</select></div></div><div class="scroll">'+pills+'</div><h2 style="margin-top:4px">'+C[V.c][0]+' '+C[V.c][1]+'</h2><p class="mu" style="margin-top:-6px">'+C[V.c][2]+'</p>'+(cards||'<div class="card"><p class="mu">No hay datos de esta categoría en el período.</p></div>')+'<p class="mu">La banda verde es el rango normal que indicó el laboratorio en cada examen.</p>'}
 
 function cargar(){return '<h1>Cargar</h1><div class="card"><p class="mu">Elige uno o varios PDF de resultados. Si ya cargaste un examen, se actualiza sin duplicarse.</p><label class="btn">📄 Elegir PDF<input type="file" accept="application/pdf" multiple hidden onchange="load([...this.files])"></label></div>'+(LOG.length?'<div id="msg" class="card">'+LOG.map(l=>'<div>'+esc(l)+'</div>').join('')+'<button class="btn g" style="margin-top:10px" onclick="go(\'home\')">Ver resumen</button></div>':'')}
 function cfg(){return '<h1>Ajustes</h1><div class="card"><b class="h">Clave de los PDF</b><input id="doc" type="tel" value="'+esc(S.doc)+'"><button class="btn g" onclick="S.doc=document.getElementById(\'doc\').value.replace(/\\D/g,\'\');save();go(\'home\')">Guardar documento</button></div><div class="card"><b class="h">Borrar datos</b><p class="mu">Elimina del teléfono todos los exámenes cargados.</p><button class="btn" style="background:#d24a3a" onclick="if(confirm(\'¿Borrar todo?\')){S={doc:\'\',name:\'\',age:null,sex:\'\',ex:{}};save();go(\'home\')}">Borrar todo</button></div>'}
