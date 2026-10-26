@@ -1,0 +1,174 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vitalidad · Control de exámenes</title>
+<style>
+:root{--bg:#f1f7f4;--c1:#fff;--c2:#e9f5ef;--tx:#14302a;--mu:#6b8079;--ac:#22a373;--ac2:#d6f0e5;--bd:#dbeae3;--bar:rgba(255,255,255,.88);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#070f0c;--c1:#1c2f29;--c2:#0e1a16;--tx:#e8f4ef;--mu:#8fa8a0;--ac:#3fd39b;--ac2:#18332a;--bd:#24403a;--bar:rgba(14,26,22,.9);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#070f0c;--c1:#1c2f29;--c2:#0e1a16;--tx:#e8f4ef;--mu:#8fa8a0;--ac:#3fd39b;--ac2:#18332a;--bd:#24403a;--bar:rgba(14,26,22,.9);color-scheme:dark}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 -apple-system,system-ui,"Segoe UI",sans-serif}
+#app{max-width:520px;margin:0 auto;padding:14px 16px 120px}
+h1{font-size:36px;font-weight:800;margin:10px 0 4px;color:var(--ac);letter-spacing:-.5px}
+h2{font-size:20px;margin:22px 0 10px}p{margin:6px 0}.mu{color:var(--mu);font-size:14px}
+.card{background:linear-gradient(160deg,var(--c1),var(--c2));border:1px solid var(--bd);border-radius:28px;padding:18px;margin-bottom:14px}
+.card b.h{font-size:19px}
+.row{display:flex;gap:14px;align-items:center}.sp{justify-content:space-between}
+.btn{display:block;width:100%;box-sizing:border-box;background:linear-gradient(135deg,var(--ac),#4a8bf0);color:#fff;border:0;border-radius:99px;padding:16px;font-size:17px;font-weight:700;text-align:center}
+.btn.g{background:var(--ac2);color:var(--ac)}
+.pill{flex:none;border:1px solid var(--bd);background:var(--c2);color:var(--tx);border-radius:99px;padding:12px 20px;font:inherit;font-size:16px}
+.pill.on{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:700}
+.scroll{display:flex;gap:8px;overflow-x:auto;padding:4px 0 12px;scrollbar-width:none}
+.sel{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:8px 0 14px}.sel label{font-size:14px;color:var(--mu)}
+select{appearance:none;-webkit-appearance:none;width:100%;margin-top:6px;border:1px solid var(--bd);background:var(--c2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='18'%3E%3Cpath d='M2 7l4-4 4 4M2 11l4 4 4-4' fill='none' stroke='%238fa8a0' stroke-width='1.8'/%3E%3C/svg%3E") no-repeat right 16px center;color:var(--tx);border-radius:99px;padding:14px 38px 14px 18px;font:inherit;font-size:17px}
+input[type=tel]{width:100%;box-sizing:border-box;padding:16px 20px;border-radius:99px;border:1px solid var(--bd);background:var(--c2);color:var(--tx);font-size:20px;margin:10px 0}
+.chip{display:inline-block;padding:4px 12px;border-radius:99px;font-size:12px;font-weight:700;background:var(--ac2);color:var(--ac)}
+.chip.w{background:#fdebd3;color:#c9740f}.chip.b{background:#fbe0dc;color:#d24a3a}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.st{background:var(--bg);border-radius:20px;padding:12px 6px;text-align:center}.st b{display:block;font-size:22px}.st span{font-size:12px;color:var(--mu)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cat{background:linear-gradient(160deg,var(--c1),var(--c2));border:1px solid var(--bd);border-radius:24px;padding:16px;text-align:left;color:var(--tx);font:inherit}
+.cat .e{font-size:30px}.cat b{display:block;margin-top:6px}
+.big{font-size:32px;font-weight:800}
+.av{background:var(--ac2);border-radius:28px;padding:8px 10px 4px}
+svg text{font-family:inherit}
+ol{padding-left:20px;margin:8px 0}li{margin:6px 0}
+#msg div{font-size:14px;margin:6px 0}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-around;background:var(--bar);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--bd);padding:8px 4px calc(8px + env(safe-area-inset-bottom,0px))}
+nav button{background:none;border:0;color:var(--mu);font:inherit;font-size:12px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:2px;flex:1}
+nav button i{font-style:normal;font-size:24px}nav button.on{color:var(--ac)}
+</style></head><body><div id="app"></div><nav id="nav"></nav>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+const K='vitalidad_v1';
+let S={doc:'',name:'',age:null,sex:'',ex:{}},V={p:'home',c:'az',f:'',t:''},LOG=[];
+try{const r=localStorage.getItem(K);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+const T={
+glic:[/^GLICEMIA BASAL/,'Glicemia basal','mg/dL',70,100,'az'],
+hba:[/^HEMOGLOBINA GLICOSILADA A1C/,'Hemoglobina glicosilada (HbA1c)','%',0,5.7,'az'],
+col:[/^COLESTEROL TOTAL/,'Colesterol total','mg/dL',50,200,'li'],
+ldl:[/^COLESTEROL DE BAJA DENSIDAD/,'Colesterol LDL (malo)','mg/dL',0,130,'li'],
+hdl:[/^COLESTEROL DE ALTA DENSIDAD/,'Colesterol HDL (bueno)','mg/dL',45,65,'li'],
+tri:[/^TRIGLICERIDOS/,'Triglicéridos','mg/dL',40,200,'li'],
+vldl:[/^COLESTEROL VLDL/,'Colesterol VLDL','mg/dL',6,34,'li'],
+cre:[/^CREATININA SERICA/,'Creatinina en sangre','mg/dL',0.5,0.9,'ri'],
+alb:[/^ALBUMINURIA EN ORINA PARCIAL/,'Albúmina en orina','mg/dL',0,20,'ri'],
+rac:[/^RELACION ALBUMINA\/CREATININA/,'Relación albúmina/creatinina','mg/g',0,20,'ri'],
+den:[/^Densidad Urinaria/,'Densidad urinaria','',1.005,1.03,'or'],
+ph:[/^pH/,'pH urinario','',4.5,8,'or'],
+leu:[/^Leucocitos/,'Leucocitos (tira)','/µL',0,25,'or'],
+gb:[/^Globulos blancos/,'Glóbulos blancos en orina','/µL',0,10,'or'],
+gr:[/^Globulos rojos/,'Glóbulos rojos en orina','/µL',0,5,'or'],
+hb:[/^HEMOGLOBINA(?= \d)/,'Hemoglobina','g/dL',12,18,'sa'],
+hct:[/^HEMATOCRITO/,'Hematocrito','%',36,54,'sa'],
+plq:[/^PLAQUETAS/,'Plaquetas','10³/µL',150,500,'sa'],
+gbl:[/^RECUENTO TOTAL GLOBULOS/,'Glóbulos blancos','10³/µL',4,11.5,'sa'],
+grl:[/^RECUENTO TOTAL DE GLOBULOS/,'Glóbulos rojos','10⁶/µL',3.8,6.5,'sa'],
+tsh:[/^TSH HORMONA ESTIMULANTE DE/,'TSH (tiroides)','µUI/mL',0.27,4.2,'ti'],
+vitd:[/^VITAMINA D 25 HIDROXI TOTAL/,'Vitamina D','ng/mL',30,100,'ti']};
+const C={az:['🍬','Azúcar','Control de diabetes y prediabetes'],li:['🫀','Colesterol','Grasas y riesgo cardiovascular'],ri:['🫘','Riñón','Filtración y pérdida de proteína'],or:['💧','Orina','Infección y características de la orina'],sa:['🩸','Hemograma','Glóbulos, hemoglobina y plaquetas'],ti:['🦋','Tiroides','TSH y vitamina D']};
+const FEM=['BLANCA','LILIA','MARIA','ANA','LUZ','ROSA','MARTHA','GLORIA','CARMEN','SANDRA','NANCY','LUCIA','ELSA','EDITH'];
+const MS=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const num=s=>parseFloat(String(s).replace(',','.'));
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const title=s=>s.toLowerCase().replace(/(^|\s)\S/g,c=>c.toUpperCase());
+const ml=d=>{const a=d.split('-');return MS[+a[1]-1]+' '+a[0].slice(2)};
+const dl=d=>{const a=d.split('-');return a[2]+'/'+a[1]+'/'+a[0]};
+const fmt=v=>+v.toFixed(2),st=(v,lo,hi)=>v<lo?-1:v>hi?1:0,go=(p,c)=>{V.p=p;if(c)V.c=c;draw()};
+const guessSex=n=>{const t=n.toUpperCase().split(/\s+/);return t.some(x=>FEM.includes(x))||/A$/.test(t[t.length-1]||'')?'F':'M'};
+
+async function readPdf(file,pw){
+ const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer(),password:pw}).promise;const lines=[];
+ for(let p=1;p<=pdf.numPages;p++){const tc=await(await pdf.getPage(p)).getTextContent();
+  const it=tc.items.filter(i=>i.str.trim()).map(i=>({x:i.transform[4],y:i.transform[5],s:i.str})).sort((a,b)=>b.y-a.y),rows=[];
+  it.forEach(i=>{const r=rows[rows.length-1];if(r&&Math.abs(r.y-i.y)<=4)r.it.push(i);else rows.push({y:i.y,it:[i]})});
+  rows.forEach(r=>lines.push(r.it.sort((a,b)=>a.x-b.x).map(i=>i.s).join(' ').replace(/\s+/g,' ').trim()))}
+ return lines}
+function parse(lines){
+ const tx=lines.join('\n'),g=r=>{const m=tx.match(r);return m?m[1].trim():''};
+ const r={date:g(/Fecha de ingreso\s*:\s*(\d{4}-\d{2}-\d{2})/),name:g(/Paciente\s*:\s*([A-ZÁÉÍÓÚÑ ]+?)\s+(?:Edad|No\.)/),doc:g(/Documento Id\s*:\s*(?:[A-Z]{1,3}-)?(\d+)/),age:num(g(/Edad\s*:\s*(\d+)/)),vals:{}};
+ for(const l of lines)for(const k in T){if(r.vals[k])continue;const m=l.match(T[k][0]);if(!m)continue;
+  const rest=l.slice(m[0].length),v=rest.match(/^\s*[<>]?(\d+(?:[.,]\d+)?)/);if(!v)continue;
+  const rg=rest.match(/(\d+(?:[.,]\d+)?)\s+-\s+(\d+(?:[.,]\d+)?)/);
+  r.vals[k]={v:num(v[1]),lo:rg?num(rg[1]):null,hi:rg?num(rg[2]):null}}
+ return r}
+async function load(files){
+ LOG=[];V.p='cargar';draw();
+ for(const f of files){try{
+  const r=parse(await readPdf(f,S.doc.replace(/\D/g,'')));
+  if(!r.date||!Object.keys(r.vals).length)throw new Error('no encontré fecha o resultados');
+  const e=S.ex[r.date]=S.ex[r.date]||{vals:{}};Object.assign(e.vals,r.vals);
+  if(r.name){S.name=r.name;if(!S.sex)S.sex=guessSex(r.name)}
+  if(r.doc&&!S.doc)S.doc=r.doc;
+  if(!S.lastDate||r.date>=S.lastDate){S.lastDate=r.date;if(r.age)S.age=r.age}
+  LOG.push('✅ '+f.name+': '+dl(r.date)+' · '+Object.keys(r.vals).length+' resultados')}
+  catch(e){LOG.push('⚠️ '+f.name+': '+(e.name==='PasswordException'?'la clave (número de documento) no abrió el archivo':e.message||'no se pudo leer'))}}
+ save();draw()}
+
+const ds=()=>Object.keys(S.ex).sort();
+const series=(k,f,t)=>ds().filter(d=>S.ex[d].vals[k]&&(!f||d>=f)&&(!t||d<=t)).map(d=>({d,...S.ex[d].vals[k]}));
+function rngs(k,s){const a=s.map(p=>p.lo!=null?[p.lo,p.hi]:null);let c=null;
+ for(let i=0;i<a.length;i++){if(a[i])c=a[i];else a[i]=c}c=null;
+ for(let i=a.length-1;i>=0;i--){if(a[i])c=a[i];else a[i]=c||[T[k][3],T[k][4]]}return a}
+const lastSt=k=>{const s=series(k);if(!s.length)return null;const r=rngs(k,s),i=s.length-1;return st(s[i].v,r[i][0],r[i][1])};
+const chipFor=z=>z===0?'<span class="chip">En rango</span>':'<span class="chip '+(z>0?'b':'w')+'">'+(z>0?'Alto':'Bajo')+'</span>';
+
+function chart(k,s){
+ const R=rngs(k,s),W=320,H=190,L=42,Rr=22,Tp=24,B=30,id='ar'+k,vs=s.map(p=>p.v);R.forEach(r=>vs.push(r[0],r[1]));
+ let a=Math.min(...vs),b=Math.max(...vs);const pd=(b-a||1)*.12;a=a>=0?Math.max(0,a-pd):a-pd;b+=pd;
+ const y=v=>Tp+(H-Tp-B)*(1-(v-a)/(b-a)),t0=new Date(s[0].d),t1=new Date(s[s.length-1].d);
+ const xs=s.length<2?[(L+W-Rr)/2]:s.map(p=>L+(W-L-Rr)*(new Date(p.d)-t0)/((t1-t0)||1));
+ const bx=s.length<2?[L,W-Rr]:xs,br=s.length<2?[R[0],R[0]]:R;
+ let o='<svg viewBox="0 0 '+W+' '+H+'" width="100%"><defs><linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2fbf8a" stop-opacity=".35"/><stop offset="1" stop-color="#2fbf8a" stop-opacity="0"/></linearGradient></defs>';
+ for(let i=0;i<4;i++){const v=a+(b-a)*i/3;o+='<line x1="'+L+'" x2="'+(W-Rr)+'" y1="'+y(v)+'" y2="'+y(v)+'" stroke="currentColor" opacity=".12"/><text x="'+(L-6)+'" y="'+(y(v)+3)+'" font-size="10" text-anchor="end" fill="#8aa39a">'+(+v.toPrecision(3))+'</text>'}
+ o+='<polygon fill="#2fbf8a" opacity=".2" points="'+bx.map((x,i)=>x+','+y(br[i][1])).join(' ')+' '+bx.map((x,i)=>x+','+y(br[i][0])).reverse().join(' ')+'"/>';
+ o+='<polyline fill="none" stroke="#2fbf8a" stroke-width="1" stroke-dasharray="3 3" opacity=".7" points="'+bx.map((x,i)=>x+','+y(br[i][1])).join(' ')+'"/><polyline fill="none" stroke="#2fbf8a" stroke-width="1" stroke-dasharray="3 3" opacity=".7" points="'+bx.map((x,i)=>x+','+y(br[i][0])).join(' ')+'"/>';
+ const P=s.map((p,i)=>[xs[i],y(p.v)]);
+ if(P.length>1){let d='M'+P[0];for(let i=0;i<P.length-1;i++){const p0=P[i-1]||P[i],p1=P[i],p2=P[i+1],p3=P[i+2]||p2;d+=' C'+[p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6,p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6,p2[0],p2[1]]}
+  o+='<path d="'+d+' L'+P[P.length-1][0]+','+(H-B)+' L'+P[0][0]+','+(H-B)+' Z" fill="url(#'+id+')"/><path d="'+d+'" fill="none" stroke="#2fbf8a" stroke-width="3" stroke-linecap="round"/>'}
+ s.forEach((p,i)=>{const z=st(p.v,R[i][0],R[i][1]),c=['#e08a1e','#2fbf8a','#e5604d'][z+1];
+  o+='<circle cx="'+P[i][0]+'" cy="'+P[i][1]+'" r="5.5" fill="'+c+'" style="stroke:var(--c2)" stroke-width="2.5"/><text x="'+P[i][0]+'" y="'+(P[i][1]-11)+'" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">'+fmt(p.v)+'</text>';
+  if(s.length<=6||i%2===0)o+='<text x="'+P[i][0]+'" y="'+(H-9)+'" font-size="10" text-anchor="middle" fill="#8aa39a">'+ml(p.d)+'</text>'});
+ return o+'</svg>'}
+
+function sil(sx){const f=sx==='F';
+ const g='<defs><linearGradient id="sg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="160"><stop offset="0" stop-color="#4a8bf0"/><stop offset="1" stop-color="#2fbf8a"/></linearGradient></defs>';
+ const body=f?'<path d="M38 40 Q50 35 62 40 L60 62 Q57 74 66 100 L34 100 Q43 74 40 62 Z" fill="url(#sg)"/><g stroke="url(#sg)" stroke-linecap="round" fill="none"><path d="M36 44 L29 82" stroke-width="6"/><path d="M64 44 L71 82" stroke-width="6"/><path d="M45 100 L44 146" stroke-width="7.5"/><path d="M55 100 L56 146" stroke-width="7.5"/></g>'
+ :'<path d="M30 40 Q50 33 70 40 L66 98 L34 98 Z" fill="url(#sg)"/><g stroke="url(#sg)" stroke-linecap="round" fill="none"><path d="M30 46 L25 90" stroke-width="8"/><path d="M70 46 L75 90" stroke-width="8"/><path d="M43 98 L42 146" stroke-width="10"/><path d="M57 98 L58 146" stroke-width="10"/></g>';
+ return '<div class="av"><svg viewBox="0 0 100 156" width="84">'+g+'<circle cx="50" cy="20" r="12" fill="url(#sg)"/><rect x="46" y="30" width="8" height="9" rx="3" fill="url(#sg)"/>'+body+'</svg></div>'}
+
+function setup(){return '<h1>🌿 Vitalidad</h1><p class="mu">Seguimiento de tus exámenes médicos</p><div class="card"><b class="h">Primer paso: la clave de los PDF</b><p class="mu">Muchos laboratorios envían los resultados protegidos con contraseña. Normalmente la clave es el <b>número de documento</b> del paciente, solo números, sin puntos ni letras (por ejemplo 1234567).</p><ol class="mu"><li>Escribe el documento abajo.</li><li>Carga los PDF de resultados.</li><li>La app los abre, lee fechas y valores y arma las gráficas.</li></ol><input id="doc" type="tel" inputmode="numeric" placeholder="Ej. 1234567"><button class="btn" onclick="const v=document.getElementById(\'doc\').value.replace(/\\D/g,\'\');if(v){S.doc=v;save();draw()}">Continuar</button><p class="mu">🔒 Todo se queda guardado solo en este teléfono. Nada se sube a internet.</p></div>'}
+
+function home(){
+ const d=ds(),last=d[d.length-1],obs=[],out=[];
+ for(const k in T){const z=lastSt(k);if(z)out.push(k)}
+ if(last){const dd=Math.round((Date.now()-new Date(last))/864e5);obs.push(dd>150?'🗓️ Han pasado '+dd+' días desde el último examen ('+dl(last)+'). Podría ser momento de programar un control.':'🗓️ Último examen hace '+dd+' días ('+dl(last)+').');
+  obs.push(out.length?'📌 Fuera de rango en su último valor: '+out.map(k=>T[k][1].replace(/ \(.*\)/,'')).join(', ')+'.':'✅ Todos los valores más recientes están en rango.')}
+ else obs.push('Aún no hay exámenes. Carga los PDF para comenzar.');
+ const cats=Object.keys(C).map(c=>{const ks=Object.keys(T).filter(k=>T[k][5]===c&&series(k).length);if(!ks.length)return'';
+  const n=ks.filter(lastSt).length;
+  return '<button class="cat" onclick="go(\'graf\',\''+c+'\')"><span class="e">'+C[c][0]+'</span><b>'+C[c][1]+'</b><span class="mu">'+(n?n+' fuera de rango':'Todo en rango')+'</span></button>'}).join('');
+ return '<h1>Inicio</h1><div class="card"><div class="row">'+sil(S.sex)+'<div><div class="big" style="font-size:22px;line-height:1.2">'+esc(title(S.name||'Paciente'))+'</div><p class="mu">'+(S.age?S.age+' años · ':'')+'Doc. '+esc(S.doc)+'</p>'+
+ '<div class="row" style="gap:6px;margin-top:6px"><button class="pill'+(S.sex==='F'?' on':'')+'" style="padding:6px 14px;font-size:14px" onclick="S.sex=\'F\';save();draw()">Mujer</button><button class="pill'+(S.sex==='M'?' on':'')+'" style="padding:6px 14px;font-size:14px" onclick="S.sex=\'M\';save();draw()">Hombre</button></div></div></div>'+
+ '<div class="stats"><div class="st"><b>'+d.length+'</b><span>Exámenes</span></div><div class="st"><b>'+(last?ml(last):'–')+'</b><span>Último</span></div><div class="st"><b>'+out.length+'</b><span>Fuera de rango</span></div></div></div>'+
+ '<div class="card">'+obs.map(o=>'<p>'+o+'</p>').join('')+'<p class="mu" style="font-size:12px">Información de apoyo, no reemplaza la valoración del médico.</p></div>'+
+ '<button class="btn" onclick="go(\'cargar\')">＋ Cargar resultados</button>'+(cats?'<h2>Categorías</h2><div class="grid">'+cats+'</div>':'')}
+
+function graf(){
+ const d=ds();if(!d.length)return '<h1>Gráficas</h1><div class="card"><p class="mu">Aún no hay exámenes cargados.</p><button class="btn" onclick="go(\'cargar\')">Cargar resultados</button></div>';
+ const f=V.f||d[0],t=V.t||d[d.length-1],op=sel=>d.map(x=>'<option value="'+x+'"'+(x===sel?' selected':'')+'>'+ml(x)+'</option>').join('');
+ const pills=Object.keys(C).map(c=>'<button class="pill'+(V.c===c?' on':'')+'" onclick="go(\'graf\',\''+c+'\')">'+C[c][0]+' '+C[c][1]+'</button>').join('');
+ const cards=Object.keys(T).filter(k=>T[k][5]===V.c).map(k=>{const s=series(k,f,t);if(!s.length)return'';const R=rngs(k,s),i=s.length-1,p=s[i],q=s[i-1],df=q?p.v-q.v:null;
+  return '<div class="card"><div class="row sp"><b class="h">'+T[k][1]+'</b>'+chipFor(st(p.v,R[i][0],R[i][1]))+'</div><div class="row" style="margin:6px 0 2px;align-items:baseline"><span class="big">'+fmt(p.v)+'</span><span class="mu">'+T[k][2]+'</span></div><p class="mu">Rango de ese examen: '+R[i][0]+' – '+R[i][1]+(df!=null?' · vs. anterior: '+(df>0?'▲ +':df<0?'▼ ':'= ')+fmt(df):'')+'</p>'+chart(k,s)+'</div>'}).join('');
+ return '<h1>Gráficas</h1><div class="sel"><div><label>Desde</label><select onchange="V.f=this.value;draw()">'+op(f)+'</select></div><div><label>Hasta</label><select onchange="V.t=this.value;draw()">'+op(t)+'</select></div></div><div class="scroll">'+pills+'</div>'+(cards||'<div class="card"><p class="mu">No hay datos de esta categoría en el período.</p></div>')+'<p class="mu">La banda verde es el rango normal que indicó el laboratorio en cada examen.</p>'}
+
+function cargar(){return '<h1>Cargar</h1><div class="card"><p class="mu">Elige uno o varios PDF de resultados. Si ya cargaste un examen, se actualiza sin duplicarse.</p><label class="btn">📄 Elegir PDF<input type="file" accept="application/pdf" multiple hidden onchange="load([...this.files])"></label></div>'+(LOG.length?'<div id="msg" class="card">'+LOG.map(l=>'<div>'+esc(l)+'</div>').join('')+'<button class="btn g" style="margin-top:10px" onclick="go(\'home\')">Ver resumen</button></div>':'')}
+function cfg(){return '<h1>Ajustes</h1><div class="card"><b class="h">Clave de los PDF</b><input id="doc" type="tel" value="'+esc(S.doc)+'"><button class="btn g" onclick="S.doc=document.getElementById(\'doc\').value.replace(/\\D/g,\'\');save();go(\'home\')">Guardar documento</button></div><div class="card"><b class="h">Borrar datos</b><p class="mu">Elimina del teléfono todos los exámenes cargados.</p><button class="btn" style="background:#d24a3a" onclick="if(confirm(\'¿Borrar todo?\')){S={doc:\'\',name:\'\',age:null,sex:\'\',ex:{}};save();go(\'home\')}">Borrar todo</button></div>'}
+
+function draw(){const a=document.getElementById('app'),n=document.getElementById('nav');
+ a.innerHTML=!S.doc?setup():({graf,cargar,cfg}[V.p]||home)();
+ n.style.display=S.doc?'flex':'none';
+ n.innerHTML=[['home','🏠','Inicio'],['graf','📈','Gráficas'],['cargar','📄','Cargar'],['cfg','⚙️','Ajustes']].map(t=>'<button class="'+(V.p===t[0]?'on':'')+'" onclick="go(\''+t[0]+'\')"><i>'+t[1]+'</i>'+t[2]+'</button>').join('');
+ window.scrollTo(0,0)}
+draw();
+</script></body></html>
