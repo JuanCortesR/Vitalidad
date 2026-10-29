@@ -34,6 +34,9 @@ input[type=tel]{width:100%;box-sizing:border-box;padding:16px 20px;border-radius
 svg text{font-family:inherit}
 ol{padding-left:20px;margin:8px 0}li{margin:6px 0}
 #msg div{font-size:14px;margin:6px 0;overflow-wrap:anywhere}
+.qt{display:grid;grid-template-columns:1fr 64px auto;gap:0 10px;align-items:center}
+.qt>div{border-top:1px solid var(--bd);padding:9px 0;align-self:stretch;display:flex;flex-direction:column;justify-content:center}
+.qt>.hd{border-top:0;padding:0 0 6px;font-size:12px;font-weight:700;color:var(--mu)}
 nav{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-around;background:var(--bar);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--bd);padding:8px 4px calc(8px + env(safe-area-inset-bottom,0px))}
 nav button{background:none;border:0;color:var(--mu);font:inherit;font-size:12px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:2px;flex:1}
 nav button i{font-style:normal;font-size:24px}nav button.on{color:var(--ac)}
@@ -92,11 +95,47 @@ h2mi:[/^HERPES II: ANTICUERPOS IGM/,'Herpes II · IgM (índice)','Índice',0,9,'
 h2gi:[/^HERPES II: ANTICUERPOS IGG/,'Herpes II · IgG (índice)','Índice',0,9,'inf'],
 hbs:[/^HEPATITIS B: ANTIGENO DE SUPERFICIE/,'Hepatitis B · antígeno','Índice',0,1,'inf'],
 hcv:[/^HEPATITIS C: AC\.? ?CONTRA EL HVC/,'Hepatitis C · anticuerpos','Índice',0,0.9,'inf'],
-hiv:[/^HIV I-II ANTICUERPOS/,'VIH · anticuerpos','Índice',0,0.9,'inf']};
+hiv:[/^HIV I-II ANTICUERPOS/,'VIH · anticuerpos','Índice',0,0.9,'inf'],
+sif:[/^SEROLOGIA SIFILIS SCREENING/,'Sífilis · tamizaje','Índice',0,1,'inf'],
+hbs2:[/^ANTIGENO DE SUPERFICIE HEPATITIS B/,'Hepatitis B · antígeno (COI)','COI',0,0.9,'inf'],
+hcv2:[/^HEPATITIS C ANTICUERPOS/,'Hepatitis C · anticuerpos (COI)','COI',0,0.89,'inf']};
 function regT(k,c){T[k]=[new RegExp('^'+c.re,'i'),c.n,c.u,c.lo,c.hi,'ot']}
 DB.custom=DB.custom||{};for(const k in DB.custom)regT(k,DB.custom[k]);
 const C={az:['🍬','Azúcar','Control de diabetes y prediabetes'],li:['🫀','Colesterol','Grasas y riesgo cardiovascular'],ri:['🫘','Riñón','Filtración y pérdida de proteína'],or:['💧','Orina','Infección y características de la orina'],sa:['🩸','Hemograma','Glóbulos, hemoglobina y plaquetas'],ti:['🦋','Tiroides','Hormona estimulante de la tiroides (TSH)'],hi:['🧪','Hígado','Enzimas hepáticas'],vi:['🌞','Vitaminas y hierro','Vitamina D, B12 y ferritina'],de:['🛡️','Defensas','Tipos de glóbulos blancos'],inf:['🦠','Infecciones','Anticuerpos contra herpes'],ho:['🧬','Hormonas','Cortisol'],ot:['📋','Otros','Otros exámenes con valores numéricos']};
-const D={'chlm':'Anticuerpos recientes contra la bacteria Chlamydia','chlg':'Anticuerpos por contacto previo con Chlamydia','h2mi':'Anticuerpos recientes contra el herpes tipo 2','h2gi':'Anticuerpos de contacto previo con el herpes tipo 2','hbs':'Detecta si hay virus de la hepatitis B activo','hcv':'Anticuerpos contra el virus de la hepatitis C','hiv':'Anticuerpos contra el virus del VIH','apoa':'Proteína del colesterol bueno (HDL); alta protege el corazón','apob':'Proteína del colesterol malo; mide cuántas partículas dañinas hay',"glic": "Azúcar en la sangre en ayunas", "hba": "Promedio del azúcar en los últimos 3 meses", "col": "Total de grasas (colesterol) en la sangre", "ldl": "Colesterol \"malo\": se acumula en las arterias", "hdl": "Colesterol \"bueno\": limpia las arterias", "tri": "Grasa en sangre que viene de azúcares y comidas", "vldl": "Colesterol que transporta triglicéridos", "cre": "Mide qué tan bien filtran los riñones", "uri": "Residuo del cuerpo; alto puede causar gota o cálculos", "alb": "Proteína en la orina; señal de daño renal temprano", "rac": "Pérdida de proteína por la orina, corregida por la concentración", "den": "Qué tan concentrada está la orina", "ph": "Acidez de la orina", "leu": "Glóbulos blancos en orina; alto sugiere infección", "gb": "Células de defensa en la orina; alto sugiere infección", "gr": "Sangre en la orina", "hb": "Proteína de los glóbulos rojos que lleva oxígeno; baja indica anemia", "hct": "Porcentaje de la sangre que son glóbulos rojos", "plq": "Células que ayudan a coagular la sangre", "gbl": "Glóbulos blancos: las defensas del cuerpo", "grl": "Glóbulos rojos: transportan oxígeno", "tsh": "Hormona que regula el trabajo de la tiroides", "vitd": "Vitamina para huesos y defensas", "b12": "Vitamina para nervios y glóbulos rojos", "fer": "Reserva de hierro del cuerpo", "alt": "Enzima del hígado; sube si el hígado se inflama", "ast": "Enzima del hígado y músculos; sube con daño en ellos", "neu": "Defensas contra bacterias", "lin": "Defensas contra virus", "mon": "Defensas que limpian restos e infecciones", "eos": "Defensas ligadas a alergias y parásitos", "bas": "Defensas ligadas a reacciones alérgicas", "h2m": "Anticuerpos recientes contra el virus del herpes tipo 2", "h2g": "Anticuerpos de contacto previo con el herpes tipo 2", "h1m": "Anticuerpos recientes contra el virus del herpes tipo 1", "h1g": "Anticuerpos de contacto previo con el herpes tipo 1", "corl": "Hormona del estrés, medida en la orina de 24 horas"};
+const D={'sif':'Prueba de tamizaje para sífilis','hbs2':'Detecta si hay virus de la hepatitis B activo','hcv2':'Anticuerpos contra el virus de la hepatitis C','chlm':'Anticuerpos recientes contra la bacteria Chlamydia','chlg':'Anticuerpos por contacto previo con Chlamydia','h2mi':'Anticuerpos recientes contra el herpes tipo 2','h2gi':'Anticuerpos de contacto previo con el herpes tipo 2','hbs':'Detecta si hay virus de la hepatitis B activo','hcv':'Anticuerpos contra el virus de la hepatitis C','hiv':'Anticuerpos contra el virus del VIH','apoa':'Proteína del colesterol bueno (HDL); alta protege el corazón','apob':'Proteína del colesterol malo; mide cuántas partículas dañinas hay',"glic": "Azúcar en la sangre en ayunas", "hba": "Promedio del azúcar en los últimos 3 meses", "col": "Total de grasas (colesterol) en la sangre", "ldl": "Colesterol \"malo\": se acumula en las arterias", "hdl": "Colesterol \"bueno\": limpia las arterias", "tri": "Grasa en sangre que viene de azúcares y comidas", "vldl": "Colesterol que transporta triglicéridos", "cre": "Mide qué tan bien filtran los riñones", "uri": "Residuo del cuerpo; alto puede causar gota o cálculos", "alb": "Proteína en la orina; señal de daño renal temprano", "rac": "Pérdida de proteína por la orina, corregida por la concentración", "den": "Qué tan concentrada está la orina", "ph": "Acidez de la orina", "leu": "Glóbulos blancos en orina; alto sugiere infección", "gb": "Células de defensa en la orina; alto sugiere infección", "gr": "Sangre en la orina", "hb": "Proteína de los glóbulos rojos que lleva oxígeno; baja indica anemia", "hct": "Porcentaje de la sangre que son glóbulos rojos", "plq": "Células que ayudan a coagular la sangre", "gbl": "Glóbulos blancos: las defensas del cuerpo", "grl": "Glóbulos rojos: transportan oxígeno", "tsh": "Hormona que regula el trabajo de la tiroides", "vitd": "Vitamina para huesos y defensas", "b12": "Vitamina para nervios y glóbulos rojos", "fer": "Reserva de hierro del cuerpo", "alt": "Enzima del hígado; sube si el hígado se inflama", "ast": "Enzima del hígado y músculos; sube con daño en ellos", "neu": "Defensas contra bacterias", "lin": "Defensas contra virus", "mon": "Defensas que limpian restos e infecciones", "eos": "Defensas ligadas a alergias y parásitos", "bas": "Defensas ligadas a reacciones alérgicas", "h2m": "Anticuerpos recientes contra el virus del herpes tipo 2", "h2g": "Anticuerpos de contacto previo con el herpes tipo 2", "h1m": "Anticuerpos recientes contra el virus del herpes tipo 1", "h1g": "Anticuerpos de contacto previo con el herpes tipo 1", "corl": "Hormona del estrés, medida en la orina de 24 horas"};
+const Q=[
+['color',/^COLOR\b/i,'Color de la orina','or','Depende de la hidratación y de lo que se comió'],
+['aspecto',/^(?:ASPECTO|TURBIDEZ)\b/i,'Aspecto de la orina','or','Transparencia; turbia puede indicar infección o cristales'],
+['leuq',/^LEUCOCITOS\b/i,'Leucocitos (tira)','or','Defensas en la orina; positivo sugiere infección'],
+['nit',/^NITRITOS\b/i,'Nitritos','or','Positivo sugiere infección urinaria por bacterias'],
+['prot',/^PROTEINAS\b/i,'Proteínas en orina','or','Positiva puede indicar daño del riñón'],
+['glu',/^GLUCOSA\b/i,'Glucosa en orina','or','Azúcar en la orina; positiva puede indicar diabetes'],
+['cet',/^CUERPOS CETONICOS\b/i,'Cuerpos cetónicos','or','Aparecen en ayuno prolongado o diabetes descontrolada'],
+['uro',/^UROBILINOGENO\b/i,'Urobilinógeno','or','Producto de la bilirrubina; alterado sugiere problema del hígado'],
+['bili',/^BILIRRUBINAS?\b/i,'Bilirrubina en orina','or','Pigmento del hígado; en la orina sugiere problema hepático'],
+['sang',/^(?:SANGRE\b|HEMOGLOBINA\.? ?\(HEMOGLOBINA LIBRE\))/i,'Sangre en orina','or','Hemoglobina o sangre visible en la orina'],
+['bact',/^BACTERIAS\b/i,'Bacterias','or','Muchas sugieren infección o muestra contaminada'],
+['moco',/^MOCO\b/i,'Moco','or','Suele ser normal o por contaminación de la muestra'],
+['rtec',/^CELULAS DEL EPITELIO TUBULAR(?: RENAL)?(?: RTEC)?/i,'Células del túbulo renal','or','Células de los túbulos del riñón',1],
+['cepn',/^CELULAS EPITELIALES NO(?: ESCAMOSAS)?/i,'Células epiteliales no escamosas','or','Células del revestimiento urinario que no son de la piel',1],
+['cepi',/^CELULAS EPITELIALES\b/i,'Células epiteliales','or','Muchas indican que la muestra se contaminó',1],
+['lev',/^LEVADURAS\b/i,'Levaduras','or','Hongos en la orina'],
+['crist',/^CRISTALES\b/i,'Cristales','or','Sales minerales; pueden formar cálculos'],
+['cilh',/^CILINDROS HIALINOS\b/i,'Cilindros hialinos','or','Moldes de proteína de los túbulos; pocos son normales'],
+['cilp',/^CILINDROS PATOLOGICOS\b/i,'Cilindros patológicos','or','Indican posible daño del riñón'],
+['esper',/^ESPERMATOZOIDES\b/i,'Espermatozoides','or','Presentes en la orina en algunos casos, sin gravedad'],
+['leuh',/^LEUCOCITOS\b(?=.*HPF)/i,'Leucocitos en sedimento','or','Glóbulos blancos al microscopio; altos sugieren infección',1],
+['erih',/^ERITROCITOS\b/i,'Eritrocitos en sedimento','or','Glóbulos rojos al microscopio; altos indican sangre en la orina',1],
+['rpr',/^SEROLOGIA \(?RPR\)?/i,'Sífilis · RPR','inf','Prueba de tamizaje para sífilis'],
+['cort',/^CORTISURIA\b/i,'Cortisuria','ho','Cortisol medido en una muestra de orina',1],
+['vol24',/^VOLUMEN EN ORINA DE 24 HORAS/i,'Volumen de orina 24 h','ho','Cantidad total de orina en 24 horas; sirve para calcular el cortisol',1]
+];
+Q.sort((a,b)=>(b[1].source.includes('HPF'))-(a[1].source.includes('HPF')));
+const QRES=/^[\s:.*]*(NO REACTIV[OA]|REACTIV[OA]|NEGATIV[OA]|POSITIV[OA]|NORMAL|ANORMAL|ESCAS[OA]S?|ABUNDANTES?|MODERAD[OA]S?|AUSENTES?|PRESENTES?|LIG\.? ?TURBI[OA]|LIGERAMENTE TURBI[OA]|TURBI[OA]|LIMPID[OA]|AMARILL[OA](?: [A-Z]+)?|PAJA|AMBAR|TRAZAS?|INDETERMINAD[OA]|C\. FLUJO|\d\+)(?![A-Za-z])/i;
+const QNUM=/^[\s:.*]*(\d+(?:[.,]\d+)?(?: ?[A-Za-zµ%][A-Za-z0-9µ%\/.]*)?)/;
+const fixQ=s=>{s=s.trim();if(/^lig\.? ?turbi/i.test(s))return'Ligeramente turbio';if(/^limpid/i.test(s))return'Límpido';if(/^ambar/i.test(s))return'Ámbar';return s.charAt(0).toUpperCase()+s.slice(1).toLowerCase()};
+const qBad=v=>/^(positiv|reactiv|anormal|abundant|moderad|present|traza|\d\+)/i.test(v);
+const dls=d=>{const a=d.split('-');return a[2]+'/'+a[1]+'/'+a[0].slice(2)};
 const FEM=['BLANCA','LILIA','MARIA','ANA','LUZ','ROSA','MARTHA','GLORIA','CARMEN','SANDRA','NANCY','LUCIA','ELSA','EDITH'];
 const MS=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 const num=s=>parseFloat(String(s).replace(',','.'));
@@ -128,8 +167,8 @@ function parse(lines){
  const UN='(mg\\/dl|g\\/dl|g\\/l|mg\\/l|ng\\/ml|pg\\/ml|ug\\/ml|µg\\/ml|ui\\/ml|uui\\/ml|µui\\/ml|ui\\/l|u\\/l|u\\/ml|ua\\/ml|meq\\/l|mmol\\/l|umol\\/l|µmol\\/l|ng\\/dl|ug\\/dl|µg\\/dl|miu\\/l|uiu\\/ml|mm\\/h|fl|pg|%|ratio|indice|segundos|x ?10\\^?\\d+\\/ ?u?l)';
  const GEN=new RegExp('^([A-Z][A-Z0-9 ,.:()\\/\\-]{3,70}?)\\s+\\*?\\s*[<>]?(\\d+(?:[.,]\\d+)?)\\s+'+UN+'(?=\\s|$)(.*)$','i');
  const BAD=/FECHA|EDAD|TELEF|NIT|PAGINA|NACIMIENTO|IMPRESION|ORDEN|SEDE|EMPRESA|MEDICO|COPIA|HISTORIA|IDENTIFICACION|DOCUMENTO|INGRESO|VALIDACION|RECEPCION|TOMA|METODO|RESULTADO|UNIDADES|REFERENCIA/i;
- r.extra={};
- lines.forEach((l0,i)=>{const l=nt(l0).replace(/^[^A-Za-z0-9%]+/,'');let hit=false;
+ r.extra={};r.q={};
+ lines.forEach((l0,i)=>{const l=nt(l0).replace(/^[^A-Za-z0-9%]+/,'');let hit=false,got=false;
   for(const k of KEYS){if(r.vals[k])continue;const m=l.match(new RegExp(T[k][0].source,'i'));if(!m)continue;hit=true;
    let rest=l.slice(m[0].length),v=rest.match(SK);
    if(!v&&lines[i+1]){const n2=nt(lines[i+1]).replace(/^Resultado\s*:?\s*/i,''),v2=n2.match(/^\s*[<>]?(\d+(?:[.,]\d+)?)\s*(?:mg|g\/|%|ng|u|µ|fl|pg|10|ratio|indice)/i);if(v2){rest=n2;v=v2}}
@@ -138,7 +177,12 @@ function parse(lines){
    let rg=rest.match(/(\d+(?:[.,]\d+)?)(?:\s*(?:-|–)\s*|\s+a\s+)(\d+(?:[.,]\d+)?)/)||rest.match(/\((\d+(?:[.,]\d+)?)\s*-\s*(\d+(?:[.,]\d+)?)\)/)||rest.match(/[A-Za-z%\/µ]\s+(\d+(?:[.,]\d+)?)\s+(\d+(?:[.,]\d+)?)\s*$/);
    let lo=rg?num(rg[1]):null,hi=rg?num(rg[2]):null;
    if(!rg){const q=refR(i,k);if(q){lo=q[0];hi=q[1]}}
-   r.vals[k]={v:num(v[1]),lo,hi}}
+   r.vals[k]={v:num(v[1]),lo,hi};got=true}
+  if(!got){for(const[qk,qre,,,,qn]of Q){if(r.q[qk])continue;const m=l.match(qre);if(!m)continue;
+   const rest=l.slice(m[0].length),mm=rest.match(QRES);let res=mm?fixQ(mm[1]):null;
+   if(!res&&qn){const mn=rest.match(QNUM);if(mn)res=mn[1]}
+   if(!res&&qn&&lines[i+1]&&/^Resultado\s*:/i.test(nt(lines[i+1]))){const mn=nt(lines[i+1]).replace(/^Resultado\s*:?\s*/i,'').match(QNUM);if(mn)res=mn[1]}
+   if(res){r.q[qk]=res;return}}}
   if(!hit){const g2=l.match(GEN);if(!g2)return;const nm=g2[1].trim().replace(/[:.\s]+$/,'');if(nm.length<4||BAD.test(nm))return;
    let rg=g2[4].match(/(\d+(?:[.,]\d+)?)\s*(?:-|–|a)\s*(\d+(?:[.,]\d+)?)/),lo,hi;
    if(rg){lo=num(rg[1]);hi=num(rg[2])}else{const q=refR(i,'');if(q){lo=q[0];hi=q[1]}else return}
@@ -152,21 +196,24 @@ async function load(files){
   if(!lines.length)throw new Error('el PDF no tiene texto legible (parece una imagen escaneada)');
   const r=parse(lines);
   for(const k in r.extra){if(!T[k]){DB.custom=DB.custom||{};DB.custom[k]=r.extra[k];regT(k,r.extra[k])}}
-  if(!r.date||!Object.keys(r.vals).length)throw new Error('abrió, pero no reconocí '+(r.date?'los exámenes':'la fecha')+'. Texto leído: '+lines.slice(0,8).join(' | ').slice(0,300));
+  if(!r.date||!(Object.keys(r.vals).length+Object.keys(r.q).length))throw new Error('abrió, pero no reconocí '+(r.date?'los exámenes':'la fecha')+'. Texto leído: '+lines.slice(0,8).join(' | ').slice(0,300));
   const hit=r.doc&&Object.keys(DB.people).find(id=>DB.people[id].pid===r.doc||String(DB.people[id].doc).replace(/\D/g,'')===r.doc);
   if(hit){S=DB.people[hit];DB.cur=hit}
   else if(r.doc&&(Object.keys(S.ex).length||S.pid)){if(!confirm('Este PDF es de '+title(r.name)+', otra persona. ¿Crear un perfil nuevo?'))throw new Error('omitido: es de otra persona ('+title(r.name)+')');const id='p'+Date.now();S={doc:r.doc,name:'',age:null,sex:'',ex:{}};DB.cur=id;DB.people[id]=S}
-  const e=S.ex[r.date]=S.ex[r.date]||{vals:{}};Object.assign(e.vals,r.vals);
+  const e=S.ex[r.date]=S.ex[r.date]||{vals:{}};Object.assign(e.vals,r.vals);e.q=Object.assign(e.q||{},r.q);
   if(r.name){S.name=r.name;if(!S.sex)S.sex=guessSex(r.name)}if(r.sex)S.sex=r.sex;if(r.doc)S.pid=r.doc;
   if(r.doc&&!S.doc)S.doc=r.doc;
   if(!S.lastDate||r.date>=S.lastDate){S.lastDate=r.date;if(r.age)S.age=r.age}
-  LOG.push('✅ '+title(S.name)+' · '+dl(r.date)+' · '+Object.keys(r.vals).length+' resultados')}
+  LOG.push('✅ '+title(S.name)+' · '+dl(r.date)+' · '+(Object.keys(r.vals).length+Object.keys(r.q).length)+' resultados')}
   catch(e){LOG.push('⚠️ '+f.name+': '+(e.name==='PasswordException'?'la clave (número de documento) no abrió el archivo':e.message||'no se pudo leer'))}}
  save();draw()}
 
 async function readAny(f){let er;for(const p of new Set([S.doc,...Object.values(DB.people).map(x=>x.doc)].filter(Boolean).map(x=>String(x).replace(/\D/g,'')))){try{return await readPdf(f,p)}catch(e){if(e.name!=='PasswordException')throw e;er=e}}
  if(!er)return readPdf(f,'');throw er}
 const ds=()=>Object.keys(S.ex).sort();
+const qRows=(c,f,t)=>Q.filter(x=>x[3]===c).map(x=>({x,rows:ds().filter(d=>(!f||d>=f)&&(!t||d<=t)&&S.ex[d].q&&S.ex[d].q[x[0]]).reverse().map(d=>({d,v:S.ex[d].q[x[0]]}))})).filter(g=>g.rows.length);
+const qCount=c=>qRows(c).reduce((a,g)=>a+g.rows.length,0);
+const qTable=(c,f,t)=>{const g=qRows(c,f,t);if(!g.length)return'';return '<h2 style="font-size:18px">Resultados sin gráfica</h2><div class="card"><div class="qt"><div class="hd">Examen</div><div class="hd">Fecha</div><div class="hd">Resultado</div>'+g.map(o=>o.rows.map((r,i)=>(i?'':'<div style="grid-row:span '+o.rows.length+'"><b>'+o.x[2]+'</b><span class="mu" style="font-size:12px">'+o.x[4]+'</span></div>')+'<div class="mu">'+dls(r.d)+'</div><div style="align-items:flex-start"><span class="chip'+(qBad(r.v)?' w':'')+'">'+esc(r.v)+'</span></div>').join('')).join('')+'</div></div>'};
 const outKeys=()=>{const d=ds(),l=d[d.length-1];if(!l)return[];return Object.keys(T).filter(k=>{if(!S.ex[l].vals[k])return false;const s=series(k),R=rngs(k,s),i=s.length-1;return st(s[i].v,R[i][0],R[i][1])!==0})};
 const goOut=()=>{if(!outKeys().length)return;V.p='graf';V.only=outKeys();draw()};
 const series=(k,f,t)=>ds().filter(d=>S.ex[d].vals[k]&&(!f||d>=f)&&(!t||d<=t)).map(d=>({d,...S.ex[d].vals[k]}));
@@ -208,9 +255,9 @@ function home(){
  if(last){const dd=Math.round((Date.now()-new Date(last))/864e5);obs.push(dd>150?'🗓️ Han pasado '+dd+' días desde el último examen ('+dl(last)+'). Podría ser momento de programar un control.':'🗓️ Último examen hace '+dd+' días ('+dl(last)+').');
   obs.push(out.length?'📌 Fuera de rango en el último examen: '+out.map(k=>T[k][1].replace(/ \(.*\)/,'')).join(', ')+'.':'✅ Todos los valores del último examen están en rango.')}
  else obs.push('Aún no hay exámenes. Carga los PDF para comenzar.');
- const cats=Object.keys(C).map(c=>{const ks=Object.keys(T).filter(k=>T[k][5]===c&&series(k).length);if(!ks.length)return'';
+ const cats=Object.keys(C).map(c=>{const ks=Object.keys(T).filter(k=>T[k][5]===c&&series(k).length);const qn=qCount(c);if(!ks.length&&!qn)return'';
   const n=ks.filter(k=>out.includes(k)).length;
-  return '<button class="cat" onclick="go(\'graf\',\''+c+'\')"><span class="e">'+C[c][0]+'</span><b>'+C[c][1]+'</b><span class="mu">'+(n?n+' fuera de rango':'Todo en rango')+'</span></button>'}).join('');
+  return '<button class="cat" onclick="go(\'graf\',\''+c+'\')"><span class="e">'+C[c][0]+'</span><b>'+C[c][1]+'</b><span class="mu">'+(ks.length?(n?n+' fuera de rango':'Todo en rango'):qn+' resultados')+'</span></button>'}).join('');
  return '<h1>Inicio</h1>'+ppl()+'<div class="card"><div class="row">'+sil(S.sex)+'<div><div class="big" style="font-size:22px;line-height:1.2">'+esc(title(S.name||'Paciente'))+'</div><p class="mu">'+(S.age?S.age+' años · ':'')+'Doc. '+esc(S.doc)+'</p>'+
  '<div class="row" style="gap:6px;margin-top:6px"><button class="pill'+(S.sex==='F'?' on':'')+'" style="padding:6px 14px;font-size:14px" onclick="S.sex=\'F\';save();draw()">Mujer</button><button class="pill'+(S.sex==='M'?' on':'')+'" style="padding:6px 14px;font-size:14px" onclick="S.sex=\'M\';save();draw()">Hombre</button></div></div></div>'+
  '<div class="stats"><div class="st"><b>'+d.length+'</b><span>Exámenes</span></div><div class="st"><b>'+(last?ml(last):'–')+'</b><span>Último</span></div><button class="st" style="border:0;color:inherit;font:inherit" onclick="goOut()"><b>'+out.length+'</b><span>Fuera de rango'+(out.length?' ›':'')+'</span></button></div></div>'+
@@ -223,7 +270,7 @@ function graf(){
  const pills=Object.keys(C).sort((a,b)=>(b===V.c)-(a===V.c)).map(c=>'<button class="pill'+(V.c===c?' on':'')+'" onclick="go(\'graf\',\''+c+'\')">'+C[c][0]+' '+C[c][1]+'</button>').join('');
  const cards=(V.only||Object.keys(T).filter(k=>T[k][5]===V.c)).map(k=>{const s=series(k,f,t);if(!s.length)return'';const R=rngs(k,s),i=s.length-1,p=s[i],q=s[i-1],df=q?p.v-q.v:null;
   return '<div class="card"><div class="row sp"><b class="h">'+T[k][1]+'</b>'+chipFor(st(p.v,R[i][0],R[i][1]))+'</div><p class="mu" style="margin:2px 0 4px">'+(D[k]||'')+'</p><div class="row" style="margin:6px 0 2px;align-items:baseline"><span class="big">'+fmt(p.v)+'</span><span class="mu">'+T[k][2]+'</span></div><p class="mu">Rango de ese examen: '+R[i][0]+' – '+R[i][1]+(df!=null?' · vs. anterior: '+(df>0?'▲ +':df<0?'▼ ':'= ')+fmt(df):'')+'</p>'+chart(k,s)+'</div>'}).join('');
- return '<h1>Gráficas</h1><div class="sel"><div><label>Desde</label><select onchange="V.f=this.value;draw()">'+op(f)+'</select></div><div><label>Hasta</label><select onchange="V.t=this.value;draw()">'+op(t)+'</select></div></div>'+(V.only?'<div class="scroll"><button class="pill" onclick="go(\'graf\',V.c)">‹ Ver por categoría</button></div><h2 style="margin-top:4px">📌 Fuera de rango</h2><p class="mu" style="margin-top:-6px">Exámenes fuera de rango en el último examen</p>':'<div class="scroll">'+pills+'</div><h2 style="margin-top:4px">'+C[V.c][0]+' '+C[V.c][1]+'</h2><p class="mu" style="margin-top:-6px">'+C[V.c][2]+'</p>')+(cards||'<div class="card"><p class="mu">No hay datos de esta categoría en el período.</p></div>')+'<p class="mu">La banda verde es el rango normal que indicó el laboratorio en cada examen.</p>'}
+ return '<h1>Gráficas</h1><div class="sel"><div><label>Desde</label><select onchange="V.f=this.value;draw()">'+op(f)+'</select></div><div><label>Hasta</label><select onchange="V.t=this.value;draw()">'+op(t)+'</select></div></div>'+(V.only?'<div class="scroll"><button class="pill" onclick="go(\'graf\',V.c)">‹ Ver por categoría</button></div><h2 style="margin-top:4px">📌 Fuera de rango</h2><p class="mu" style="margin-top:-6px">Exámenes fuera de rango en el último examen</p>':'<div class="scroll">'+pills+'</div><h2 style="margin-top:4px">'+C[V.c][0]+' '+C[V.c][1]+'</h2><p class="mu" style="margin-top:-6px">'+C[V.c][2]+'</p>')+(cards||(V.only||qTable(V.c,f,t)?'':'<div class="card"><p class="mu">No hay datos de esta categoría en el período.</p></div>'))+(V.only?'':qTable(V.c,f,t))+'<p class="mu">La banda verde es el rango normal que indicó el laboratorio en cada examen.</p>'}
 
 function cargar(){return '<h1>Cargar</h1><div class="card"><p class="mu">Elige uno o varios PDF de resultados. Si ya cargaste un examen, se actualiza sin duplicarse.</p><label class="btn">📄 Elegir PDF<input type="file" accept="application/pdf" multiple hidden onchange="load([...this.files])"></label></div>'+(LOG.length?'<div id="msg" class="card">'+LOG.map(l=>'<div>'+esc(l)+'</div>').join('')+'<button class="btn g" style="margin-top:10px" onclick="go(\'home\')">Ver resumen</button></div>':'')}
 function cfg(){const ids=Object.keys(DB.people);return '<h1>Ajustes</h1><div class="card"><b class="h">Personas</b>'+(ids.length?ids.map(id=>{const p=DB.people[id];return '<div class="row sp" style="padding:10px 0;border-bottom:1px solid var(--bd)"><div><b>'+esc(title(p.name||'Sin nombre'))+(id===DB.cur?' ✓':'')+'</b><p class="mu" style="margin:0">Doc. '+esc(p.doc)+' · '+Object.keys(p.ex||{}).length+' exámenes</p></div><div class="row" style="gap:6px"><button class="pill" style="padding:8px 14px;font-size:14px" onclick="swP(\''+id+'\');go(\'home\')">Ver</button><button class="pill" style="padding:8px 14px;font-size:14px;color:#d24a3a" onclick="delPid(\''+id+'\')">Eliminar</button></div></div>'}).join(''):'<p class="mu">No hay personas.</p>')+'<button class="btn g" style="margin-top:12px" onclick="go(\'nueva\')">＋ Agregar persona</button></div><div class="card"><b class="h">Clave de los PDF</b><p class="mu">Documento de la persona seleccionada.</p><input id="doc" type="tel" value="'+esc(S.doc)+'"><button class="btn g" onclick="S.doc=document.getElementById(\'doc\').value.replace(/\\D/g,\'\');save();go(\'home\')">Guardar documento</button></div>'}
