@@ -85,9 +85,18 @@ h2m:[/^HERPES II ANTICUERPOS IG M/,'Herpes II · IgM','U',0,8.99,'inf'],
 h2g:[/^HERPES II ANTICUERPOS IG G/,'Herpes II · IgG','UA/mL',0,7.99,'inf'],
 h1m:[/^HERPES I ANTICUERPOS IG M/,'Herpes I · IgM','U',0,8.99,'inf'],
 h1g:[/^HERPES I ANTICUERPOS IG G/,'Herpes I · IgG','UA/mL',0,7.5,'inf'],
-corl:[/^CORTISOL LIBRE EN ORINA/,'Cortisol libre en orina (24 h)','µg/24h',1.5,63,'ho']};
-const C={az:['🍬','Azúcar','Control de diabetes y prediabetes'],li:['🫀','Colesterol','Grasas y riesgo cardiovascular'],ri:['🫘','Riñón','Filtración y pérdida de proteína'],or:['💧','Orina','Infección y características de la orina'],sa:['🩸','Hemograma','Glóbulos, hemoglobina y plaquetas'],ti:['🦋','Tiroides','Hormona estimulante de la tiroides (TSH)'],hi:['🧪','Hígado','Enzimas hepáticas'],vi:['🌞','Vitaminas y hierro','Vitamina D, B12 y ferritina'],de:['🛡️','Defensas','Tipos de glóbulos blancos'],inf:['🦠','Infecciones','Anticuerpos contra herpes'],ho:['🧬','Hormonas','Cortisol']};
-const D={'apoa':'Proteína del colesterol bueno (HDL); alta protege el corazón','apob':'Proteína del colesterol malo; mide cuántas partículas dañinas hay',"glic": "Azúcar en la sangre en ayunas", "hba": "Promedio del azúcar en los últimos 3 meses", "col": "Total de grasas (colesterol) en la sangre", "ldl": "Colesterol \"malo\": se acumula en las arterias", "hdl": "Colesterol \"bueno\": limpia las arterias", "tri": "Grasa en sangre que viene de azúcares y comidas", "vldl": "Colesterol que transporta triglicéridos", "cre": "Mide qué tan bien filtran los riñones", "uri": "Residuo del cuerpo; alto puede causar gota o cálculos", "alb": "Proteína en la orina; señal de daño renal temprano", "rac": "Pérdida de proteína por la orina, corregida por la concentración", "den": "Qué tan concentrada está la orina", "ph": "Acidez de la orina", "leu": "Glóbulos blancos en orina; alto sugiere infección", "gb": "Células de defensa en la orina; alto sugiere infección", "gr": "Sangre en la orina", "hb": "Proteína de los glóbulos rojos que lleva oxígeno; baja indica anemia", "hct": "Porcentaje de la sangre que son glóbulos rojos", "plq": "Células que ayudan a coagular la sangre", "gbl": "Glóbulos blancos: las defensas del cuerpo", "grl": "Glóbulos rojos: transportan oxígeno", "tsh": "Hormona que regula el trabajo de la tiroides", "vitd": "Vitamina para huesos y defensas", "b12": "Vitamina para nervios y glóbulos rojos", "fer": "Reserva de hierro del cuerpo", "alt": "Enzima del hígado; sube si el hígado se inflama", "ast": "Enzima del hígado y músculos; sube con daño en ellos", "neu": "Defensas contra bacterias", "lin": "Defensas contra virus", "mon": "Defensas que limpian restos e infecciones", "eos": "Defensas ligadas a alergias y parásitos", "bas": "Defensas ligadas a reacciones alérgicas", "h2m": "Anticuerpos recientes contra el virus del herpes tipo 2", "h2g": "Anticuerpos de contacto previo con el herpes tipo 2", "h1m": "Anticuerpos recientes contra el virus del herpes tipo 1", "h1g": "Anticuerpos de contacto previo con el herpes tipo 1", "corl": "Hormona del estrés, medida en la orina de 24 horas"};
+corl:[/^CORTISOL LIBRE EN ORINA/,'Cortisol libre en orina (24 h)','µg/24h',1.5,63,'ho'],
+chlm:[/^CHLAMYDIA TRACHOMATIS: ANTICUERPOS IGM/,'Chlamydia · IgM','Ratio',0,0.8,'inf'],
+chlg:[/^CHLAMYDIA TRACHOMATIS: ANTICUERPOS IGG/,'Chlamydia · IgG','Ratio',0,0.8,'inf'],
+h2mi:[/^HERPES II: ANTICUERPOS IGM/,'Herpes II · IgM (índice)','Índice',0,9,'inf'],
+h2gi:[/^HERPES II: ANTICUERPOS IGG/,'Herpes II · IgG (índice)','Índice',0,9,'inf'],
+hbs:[/^HEPATITIS B: ANTIGENO DE SUPERFICIE/,'Hepatitis B · antígeno','Índice',0,1,'inf'],
+hcv:[/^HEPATITIS C: AC\.? ?CONTRA EL HVC/,'Hepatitis C · anticuerpos','Índice',0,0.9,'inf'],
+hiv:[/^HIV I-II ANTICUERPOS/,'VIH · anticuerpos','Índice',0,0.9,'inf']};
+function regT(k,c){T[k]=[new RegExp('^'+c.re,'i'),c.n,c.u,c.lo,c.hi,'ot']}
+DB.custom=DB.custom||{};for(const k in DB.custom)regT(k,DB.custom[k]);
+const C={az:['🍬','Azúcar','Control de diabetes y prediabetes'],li:['🫀','Colesterol','Grasas y riesgo cardiovascular'],ri:['🫘','Riñón','Filtración y pérdida de proteína'],or:['💧','Orina','Infección y características de la orina'],sa:['🩸','Hemograma','Glóbulos, hemoglobina y plaquetas'],ti:['🦋','Tiroides','Hormona estimulante de la tiroides (TSH)'],hi:['🧪','Hígado','Enzimas hepáticas'],vi:['🌞','Vitaminas y hierro','Vitamina D, B12 y ferritina'],de:['🛡️','Defensas','Tipos de glóbulos blancos'],inf:['🦠','Infecciones','Anticuerpos contra herpes'],ho:['🧬','Hormonas','Cortisol'],ot:['📋','Otros','Otros exámenes con valores numéricos']};
+const D={'chlm':'Anticuerpos recientes contra la bacteria Chlamydia','chlg':'Anticuerpos por contacto previo con Chlamydia','h2mi':'Anticuerpos recientes contra el herpes tipo 2','h2gi':'Anticuerpos de contacto previo con el herpes tipo 2','hbs':'Detecta si hay virus de la hepatitis B activo','hcv':'Anticuerpos contra el virus de la hepatitis C','hiv':'Anticuerpos contra el virus del VIH','apoa':'Proteína del colesterol bueno (HDL); alta protege el corazón','apob':'Proteína del colesterol malo; mide cuántas partículas dañinas hay',"glic": "Azúcar en la sangre en ayunas", "hba": "Promedio del azúcar en los últimos 3 meses", "col": "Total de grasas (colesterol) en la sangre", "ldl": "Colesterol \"malo\": se acumula en las arterias", "hdl": "Colesterol \"bueno\": limpia las arterias", "tri": "Grasa en sangre que viene de azúcares y comidas", "vldl": "Colesterol que transporta triglicéridos", "cre": "Mide qué tan bien filtran los riñones", "uri": "Residuo del cuerpo; alto puede causar gota o cálculos", "alb": "Proteína en la orina; señal de daño renal temprano", "rac": "Pérdida de proteína por la orina, corregida por la concentración", "den": "Qué tan concentrada está la orina", "ph": "Acidez de la orina", "leu": "Glóbulos blancos en orina; alto sugiere infección", "gb": "Células de defensa en la orina; alto sugiere infección", "gr": "Sangre en la orina", "hb": "Proteína de los glóbulos rojos que lleva oxígeno; baja indica anemia", "hct": "Porcentaje de la sangre que son glóbulos rojos", "plq": "Células que ayudan a coagular la sangre", "gbl": "Glóbulos blancos: las defensas del cuerpo", "grl": "Glóbulos rojos: transportan oxígeno", "tsh": "Hormona que regula el trabajo de la tiroides", "vitd": "Vitamina para huesos y defensas", "b12": "Vitamina para nervios y glóbulos rojos", "fer": "Reserva de hierro del cuerpo", "alt": "Enzima del hígado; sube si el hígado se inflama", "ast": "Enzima del hígado y músculos; sube con daño en ellos", "neu": "Defensas contra bacterias", "lin": "Defensas contra virus", "mon": "Defensas que limpian restos e infecciones", "eos": "Defensas ligadas a alergias y parásitos", "bas": "Defensas ligadas a reacciones alérgicas", "h2m": "Anticuerpos recientes contra el virus del herpes tipo 2", "h2g": "Anticuerpos de contacto previo con el herpes tipo 2", "h1m": "Anticuerpos recientes contra el virus del herpes tipo 1", "h1g": "Anticuerpos de contacto previo con el herpes tipo 1", "corl": "Hormona del estrés, medida en la orina de 24 horas"};
 const FEM=['BLANCA','LILIA','MARIA','ANA','LUZ','ROSA','MARTHA','GLORIA','CARMEN','SANDRA','NANCY','LUCIA','ELSA','EDITH'];
 const MS=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 const num=s=>parseFloat(String(s).replace(',','.'));
@@ -114,13 +123,27 @@ function isoDate(tx){const mt=tx.match(/Fecha (?:de )?(?:toma(?: de)? muestra|re
 function parse(lines){
  const tx=lines.join('\n'),g=r=>{const m=tx.match(r);return m?m[1].trim():''};
  const r={date:isoDate(tx),name:g(/(?:Paciente|Nombre)\s*:?\s*([A-ZÁÉÍÓÚÑ ]+?)(?:\s+(?:Edad|No\.|Fecha|Documento|Petici|Historia|N[º°o]|Tel)|\n)/),doc:g(/(?:Documento Id|Historia|Iden.{0,5}caci.n)\s*:?\s*(?:[A-Z]{1,3}[- ])?(\d+)/),age:num(g(/Edad(?: de ingreso)?\s*:?\s*(\d+)/)),sex:/(?:Sexo|G.nero)\s*:?\s*Femenino/i.test(tx)?'F':/(?:Sexo|G.nero)\s*:?\s*Masculino/i.test(tx)?'M':'',vals:{}};
- lines.forEach((l0,i)=>{const l=nt(l0).replace(/^[^A-Za-z0-9%]+/,'');for(const k in T){if(r.vals[k])continue;const m=l.match(new RegExp(T[k][0].source,'i'));if(!m)continue;
-  let rest=l.slice(m[0].length),v=rest.match(SK);
-  if(!v&&lines[i+1]){const n2=nt(lines[i+1]).replace(/^Resultado\s*:?\s*/i,''),v2=n2.match(/^\s*[<>]?(\d+(?:[.,]\d+)?)\s*(?:mg|g\/|%|ng|u|\u00b5|fl|pg|10)/i);if(v2){rest=n2;v=v2}}
-  if(!v){for(let j=i+1;j<Math.min(lines.length,i+5);j++){const n3=nt(lines[j]);if(/^Resultado\s*:/i.test(n3)){const n4=n3.replace(/^Resultado\s*:?\s*/i,''),v3=n4.match(/^[<>]?(\d+(?:[.,]\d+)?)/);if(v3){rest=n4;v=v3}break}}}
-  if(!v)continue;
-  const rg=rest.match(/(\d+(?:[.,]\d+)?)(?:\s*(?:-|\u2013)\s*|\s+a\s+)(\d+(?:[.,]\d+)?)/)||rest.match(/\((\d+(?:[.,]\d+)?)\s*-\s*(\d+(?:[.,]\d+)?)\)/)||rest.match(/[A-Za-z%\/\u00b5]\s+(\d+(?:[.,]\d+)?)\s+(\d+(?:[.,]\d+)?)\s*$/);
-  r.vals[k]={v:num(v[1]),lo:rg?num(rg[1]):null,hi:rg?num(rg[2]):null}}});
+ const KEYS=Object.keys(T);
+ const refR=(i,self)=>{for(let j=i+1;j<Math.min(lines.length,i+9);j++){const n=nt(lines[j]).replace(/^[^A-Za-z0-9%]+/,'');if(/^Resultado\s*:/i.test(n))break;if(KEYS.some(k=>k!==self&&new RegExp(T[k][0].source,'i').test(n)))break;const q=n.match(/(?:Negativo|No reactivo|Normal)\s*:?\s*Menor (?:de|a|que)\s*(\d+(?:[.,]\d+)?)/i);if(q)return[0,num(q[1])];const q2=n.match(/^(?:V\. de )?(?:Valores? de )?(?:referencia|rango)[^0-9]{0,25}(\d+(?:[.,]\d+)?)\s*(?:-|a|\u2013)\s*(\d+(?:[.,]\d+)?)/i);if(q2)return[num(q2[1]),num(q2[2])]}return null};
+ const UN='(mg\\/dl|g\\/dl|g\\/l|mg\\/l|ng\\/ml|pg\\/ml|ug\\/ml|µg\\/ml|ui\\/ml|uui\\/ml|µui\\/ml|ui\\/l|u\\/l|u\\/ml|ua\\/ml|meq\\/l|mmol\\/l|umol\\/l|µmol\\/l|ng\\/dl|ug\\/dl|µg\\/dl|miu\\/l|uiu\\/ml|mm\\/h|fl|pg|%|ratio|indice|segundos|x ?10\\^?\\d+\\/ ?u?l)';
+ const GEN=new RegExp('^([A-Z][A-Z0-9 ,.:()\\/\\-]{3,70}?)\\s+\\*?\\s*[<>]?(\\d+(?:[.,]\\d+)?)\\s+'+UN+'(?=\\s|$)(.*)$','i');
+ const BAD=/FECHA|EDAD|TELEF|NIT|PAGINA|NACIMIENTO|IMPRESION|ORDEN|SEDE|EMPRESA|MEDICO|COPIA|HISTORIA|IDENTIFICACION|DOCUMENTO|INGRESO|VALIDACION|RECEPCION|TOMA|METODO|RESULTADO|UNIDADES|REFERENCIA/i;
+ r.extra={};
+ lines.forEach((l0,i)=>{const l=nt(l0).replace(/^[^A-Za-z0-9%]+/,'');let hit=false;
+  for(const k of KEYS){if(r.vals[k])continue;const m=l.match(new RegExp(T[k][0].source,'i'));if(!m)continue;hit=true;
+   let rest=l.slice(m[0].length),v=rest.match(SK);
+   if(!v&&lines[i+1]){const n2=nt(lines[i+1]).replace(/^Resultado\s*:?\s*/i,''),v2=n2.match(/^\s*[<>]?(\d+(?:[.,]\d+)?)\s*(?:mg|g\/|%|ng|u|µ|fl|pg|10|ratio|indice)/i);if(v2){rest=n2;v=v2}}
+   if(!v){for(let j=i+1;j<Math.min(lines.length,i+5);j++){const n3=nt(lines[j]);if(/^Resultado\s*:/i.test(n3)){const n4=n3.replace(/^Resultado\s*:?\s*/i,''),v3=n4.match(/^[<>]?(\d+(?:[.,]\d+)?)/);if(v3){rest=n4;v=v3}break}}}
+   if(!v)continue;
+   let rg=rest.match(/(\d+(?:[.,]\d+)?)(?:\s*(?:-|–)\s*|\s+a\s+)(\d+(?:[.,]\d+)?)/)||rest.match(/\((\d+(?:[.,]\d+)?)\s*-\s*(\d+(?:[.,]\d+)?)\)/)||rest.match(/[A-Za-z%\/µ]\s+(\d+(?:[.,]\d+)?)\s+(\d+(?:[.,]\d+)?)\s*$/);
+   let lo=rg?num(rg[1]):null,hi=rg?num(rg[2]):null;
+   if(!rg){const q=refR(i,k);if(q){lo=q[0];hi=q[1]}}
+   r.vals[k]={v:num(v[1]),lo,hi}}
+  if(!hit){const g2=l.match(GEN);if(!g2)return;const nm=g2[1].trim().replace(/[:.\s]+$/,'');if(nm.length<4||BAD.test(nm))return;
+   let rg=g2[4].match(/(\d+(?:[.,]\d+)?)\s*(?:-|–|a)\s*(\d+(?:[.,]\d+)?)/),lo,hi;
+   if(rg){lo=num(rg[1]);hi=num(rg[2])}else{const q=refR(i,'');if(q){lo=q[0];hi=q[1]}else return}
+   const key='x_'+nm.toLowerCase().replace(/[^a-z0-9]+/g,'_').slice(0,40);if(r.vals[key])return;
+   r.vals[key]={v:num(g2[2]),lo,hi};r.extra[key]={re:nm.replace(/[.*+?^${}()|[\]\\\/]/g,'\\$&'),n:title(nm),u:g2[3],lo,hi}}});
  return r}
 async function load(files){
  LOG=[];V.p='cargar';draw();
@@ -128,6 +151,7 @@ async function load(files){
   let lines;try{lines=await readAny(f)}catch(e){if(e.name!=='PasswordException')throw e;const pw=prompt('Este PDF tiene una clave distinta al documento. Escríbela aquí:');if(!pw)throw e;lines=await readPdf(f,pw.trim())}
   if(!lines.length)throw new Error('el PDF no tiene texto legible (parece una imagen escaneada)');
   const r=parse(lines);
+  for(const k in r.extra){if(!T[k]){DB.custom=DB.custom||{};DB.custom[k]=r.extra[k];regT(k,r.extra[k])}}
   if(!r.date||!Object.keys(r.vals).length)throw new Error('abrió, pero no reconocí '+(r.date?'los exámenes':'la fecha')+'. Texto leído: '+lines.slice(0,8).join(' | ').slice(0,300));
   const hit=r.doc&&Object.keys(DB.people).find(id=>DB.people[id].pid===r.doc||String(DB.people[id].doc).replace(/\D/g,'')===r.doc);
   if(hit){S=DB.people[hit];DB.cur=hit}
